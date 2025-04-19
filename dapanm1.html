@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Kết quả bài làm - Macle Nin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg-color: #121212;
+      --card-color: #1e1e2f;
+      --text-color: #f0f0f0;
+      --accent-color: #7f5af0;
+      --correct: #2ecc71;
+      --wrong: #e74c3c;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: var(--accent-color);
+      text-shadow: 0 0 8px var(--accent-color);
+    }
+
+    .summary {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 18px;
+    }
+
+    .question {
+      background-color: var(--card-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px rgba(127, 90, 240, 0.2);
+    }
+
+    .correct {
+      color: var(--correct);
+      font-weight: bold;
+    }
+
+    .incorrect {
+      color: var(--wrong);
+      font-weight: bold;
+    }
+
+    input[type="radio"] {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Kết quả bài làm</h1>
+  <div class="summary">
+    <p id="score"></p>
+    <p id="duration"></p>
+  </div>
+  <div id="resultContainer"></div>
+  <div style="text-align: center;">
+    <a class="btn" href="macle.html" style="background: rgb(0, 89, 255); color: white;">🔙Quay Lại</a>
+    
+  </div>
+
+  <script>
+    const questions = {
+    q1: { text: "Câu 1: Tư bản đầu tư kí hiệu gồm có?", answers: { a: "C và V", b: "V và M", c: "M và P", d: "P và C" }, correctAnswer: "a" },
+    q2: { text: "Câu 2: Chi phí sản xuất kí hiệu là?", answers: { a: "K", b: "k", c: "c", d: "v" }, correctAnswer: "b" },
+    q3: { text: "Câu 3: Chọn ý đúng về tư bản ứng trước và chi phí sản xuất?", answers: { a: "Chi phí sản xuất luôn nhỏ hơn tư bản ứng trước", b: "Chi phí sản xuất luôn lớn hơn tư bản ứng trước", c: "Chi phí sản xuất là tính giá trị chuyển vào sản phẩm trong 1 năm", d: "Tư bản ứng trước là tính giá trị chuyển vào sản phẩm trong 1 năm" }, correctAnswer: "c" },
+    q4: { text: "Câu 4: Chọn ý đúng về H và H’?", answers: { a: "H luôn bằng H’", b: "H luôn nhỏ hơn H’", c: "H luôn lớn hơn H’", d: "H luôn bằng và lớn hơn H’" }, correctAnswer: "b" },
+    q5: { text: "Câu 5: Hai thuộc tính của hàng hoá sức lao động là?", answers: { a: "Giá trị và giá cả", b: "Giá trị và giá trị sử dụng", c: "Giá trị và giá trị trao đổi", d: "Giá trị sử dụng và giá cả" }, correctAnswer: "b" },
+    q6: { text: "Câu 6: Giá trị của tư bản bất biến bao gồm giá trị nào?", answers: { a: "C1", b: "V và C", c: "M", d: "C1 và C2" }, correctAnswer: "d" },
+    q7: { text: "Câu 7: Bộ phận tư bản nào khi chuyển giá trị vào sản phẩm giá trị của nó tăng lên?", answers: { a: "Tư bản bất biến", b: "Tư bản khả biến", c: "Tư bản cố định", d: "Tư bản lưu động" }, correctAnswer: "b" },
+    q8: { text: "Câu 8: Nhà tư bản X có thời gian 1 vòng chu chuyển là 1 tháng, vậy số vòng chu chuyển trong năm là?", answers: { a: "1", b: "6", c: "10", d: "12" }, correctAnswer: "d" },
+    q9: { text: "Câu 9: Tỷ suất giá trị thặng dư phản ánh điều gì?", answers: { a: "Mức độ bóc lột", b: "Quy mô bóc lột", c: "Lợi nhuận của việc đầu tư", d: "Giá trị thặng dư thu được" }, correctAnswer: "a" },
+    q10: { text: "Câu 10: m’ = 100% ta có thể suy ra?", answers: { a: "m = 2v", b: "t’ = t", c: "2v = m", d: "m = 3v" }, correctAnswer: "b" },
+    q11: { text: "Câu 11: Cường độ lao động tăng sẽ dẫn đến?", answers: { a: "Số lượng sản phẩm tăng", b: "Giá trị tổng sản phẩm giảm", c: "Giá trị 1 sản phẩm giảm", d: "Số lượng sản phẩm không đổi" }, correctAnswer: "a" },
+    q12: { text: "Câu 12: Giảm năng suất lao động 2 lần và tăng cường độ lao động 2 lần thì?", answers: { a: "Số lượng sản phẩm giảm 2 lần", b: "Giá trị 1 sản phẩm giảm 2 lần", c: "Giá trị tổng sản phẩm không đổi", d: "Giá trị tổng sản phẩm tăng 2 lần" }, correctAnswer: "d" },
+    q13: { text: "Câu 13: Một trong những hạn chế của hình thái chung của giá trị là gì?", answers: { a: "Thiếu sản phẩm", b: "Lạm phát", c: "Thiếu tiền", d: "Khó bảo quản" }, correctAnswer: "d" },
+    q14: { text: "Câu 14: Ưu điểm lớn nhất của vàng so với tiền giấy là?", answers: { a: "Không cồng kềnh", b: "Không mất giá", c: "Có thể làm trang sức", d: "Không rách nát" }, correctAnswer: "b" },
+    q15: { text: "Câu 15: Đặc điểm của tư bản tài chính là?", answers: { a: "Không có vai trò", b: "Không liên kết ngân hàng và công nghiệp", c: "Là sự dung hợp tư bản ngân hàng và công nghiệp", d: "Tư bản nhỏ lẻ" }, correctAnswer: "c" },
+    q16: { text: "Câu 16: Khi bán hàng hóa cao hơn giá trị thì?", answers: { a: "p > m", b: "p = m", c: "p < m", d: "Không có lợi nhuận" }, correctAnswer: "a" },
+    q17: { text: "Câu 17: Dựa vào tạo giá trị thặng dư chia tư bản thành?", answers: { a: "Tư bản bất biến và tư bản cố định", b: "Tư bản bất biến và tư bản khả biến", c: "Tư bản cố định và lưu động", d: "Tư bản lưu động và bất biến" }, correctAnswer: "b" },
+    q18: { text: "Câu 18: Giá trị sức lao động đo bằng giá trị yếu tố nào?", answers: { a: "Đối tượng lao động", b: "Tư liệu lao động", c: "Tư liệu sản xuất", d: "Tư liệu sinh hoạt" }, correctAnswer: "d" },
+    q19: { text: "Câu 19: Tăng cường độ lao động giống như?", answers: { a: "Kéo dài thời gian lao động", b: "Bắt làm nhanh", c: "Làm khẩn trương", d: "Tăng năng suất" }, correctAnswer: "a" },
+    q20: { text: "Câu 20: Chọn ý đúng về tích tụ và tập trung tư bản?", answers: { a: "Tích tụ tư bản từ từ tích lũy của từng nhà tư bản", b: "Tập trung từ tích lũy của từng nhà tư bản", c: "Tích tụ không làm tăng tư bản xã hội", d: "Tập trung làm tăng tư bản xã hội" }, correctAnswer: "a" },
+    q21: { text: "Câu 21: Xếp loại tổ chức độc quyền từ thấp đến cao?", answers: { a: "Cartel, Syndicate, Trust, Consortium", b: "Syndicate, Trust, Consortium, Cartel", c: "Cartel, Trust, Syndicate, Consortium", d: "Syndicate, Cartel, Trust, Consortium" }, correctAnswer: "a" },
+    q22: { text: "Câu 22: Khủng hoảng kinh tế 1873 làm phá sản xí nghiệp nào?", answers: { a: "Nhỏ", b: "Vừa và nhỏ", c: "Lớn", d: "Nhà nước" }, correctAnswer: "b" },
+    q23: { text: "Câu 23: Nguyên nhân hình thành độc quyền nhà nước?", answers: { a: "Do phát triển lực lượng sản xuất", b: "Do cạnh tranh", c: "Do khủng hoảng và tín dụng", d: "Do mâu thuẫn xã hội" }, correctAnswer: "d" },
+    q24: { text: "Câu 24: Tiền tệ khác hàng hóa ở điểm nào?", answers: { a: "Không có giá trị", b: "Chỉ có giá trị sử dụng", c: "Có thể dự trữ", d: "Chỉ làm phương tiện trao đổi" }, correctAnswer: "c" },
+    q25: { text: "Câu 25: Ý nào không phải lý do phát triển KTTT XHCN ở Việt Nam?", answers: { a: "Phù hợp xu hướng khách quan", b: "Tính ưu việt", c: "Phù hợp nguyện vọng nhân dân", d: "Phục vụ giai cấp cầm quyền" }, correctAnswer: "d" },
+    q26: { text: "Câu 26: KTTT định hướng XHCN sẽ không dẫn đến điều gì?", answers: { a: "Phá vỡ tính tự cấp tự túc", b: "Đẩy mạnh phân công", c: "Tăng cường bóc lột sức lao động", d: "Tạo việc làm" }, correctAnswer: "c" },
+    q27: { text: "Câu 27: Khuyết điểm của sản xuất tư cung tư cấp?", answers: { a: "Không đa dạng chất liệu", b: "Cạnh tranh không lành mạnh", c: "Ô nhiễm môi trường", d: "Phân hóa giàu nghèo" }, correctAnswer: "c" },
+    q28: { text: "Câu 28: Chức năng nào không phải của tiền tệ?", answers: { a: "Thước đo giá trị", b: "Phương tiện cất trữ", c: "Phương tiện tín dụng", d: "Phương tiện lưu thông" }, correctAnswer: "c" },
+    q29: { text: "Câu 29: Điều kiện ra đời của sản xuất hàng hóa?", answers: { a: "Nhu cầu tiêu dùng cao", b: "Tách biệt về kinh tế", c: "Hàng hóa dư thừa", d: "Năng suất tăng" }, correctAnswer: "b" },
+    q30: { text: "Câu 30: Xã hội nào có phân công lao động nhưng chưa có sản xuất hàng hóa?", answers: { a: "Xã hội nguyên thủy", b: "Chiếm hữu nô lệ", c: "Phong kiến", d: "Tư bản" }, correctAnswer: "a" },
+    q31: { text: "Câu 31: Ở nước mỹ, thông qua nghị định làm việc 8 giờ vào năm nào?", answers: { a: "1884", b: "1886", c: "1999", d: "2021" }, correctAnswer: "a" },
+    q32: { text: "Câu 32: Chọn ý nói về giá trị hàng hóa?", answers: { a: "Giá bán 100 ngàn đồng", b: "Giá bán 10 chỉ vàng", c: "Chiếc áo có chức năng để mặc", d: "Hao phí lao động xã hội cần thiết là 100 ngàn đồng" }, correctAnswer: "d" }
+  };
+
+  const resultData = JSON.parse(localStorage.getItem("quizResults"));
+  const container = document.getElementById("resultContainer");
+  const startTime = parseInt(localStorage.getItem("quizStartTime"));
+  const endTime = Date.now();
+
+  let correctCount = 0;
+  let incorrectCount = 0;
+
+  resultData.forEach(result => {
+    const q = questions[result.questionId];
+    if (!q) return;
+
+    const div = document.createElement("div");
+    div.className = "question";
+    let html = `<p><strong>${q.text}</strong></p><ol type="A">`;
+
+    for (const [key, value] of Object.entries(q.answers)) {
+      const isCorrect = key === q.correctAnswer;
+      const isUser = key === result.userAnswer;
+      let className = "";
+
+      if (isCorrect) className = "correct";
+      else if (isUser && !isCorrect) className = "incorrect";
+
+      html += `<li class="${className}">
+                <label><input type="radio" disabled ${isUser ? "checked" : ""}> ${value}</label>
+              </li>`;
+    }
+
+    html += `</ol>`;
+    div.innerHTML = html;
+    container.appendChild(div);
+
+    if (result.userAnswer === q.correctAnswer) {
+      correctCount++;
+    } else if (result.userAnswer !== null) {
+      incorrectCount++;
+    }
+  });
+
+  // Tính điểm và thời gian làm
+  const totalQuestions = Object.keys(questions).length;
+  const score = (correctCount * 0.2).toFixed(1);
+  const maxScore = (totalQuestions * 0.2).toFixed(1);
+  document.getElementById("score").innerText = `Tổng điểm: ${score}/${maxScore}`;
+  document.getElementById("score").insertAdjacentHTML("afterend", `<p>Số câu đúng: <span class="correct">${correctCount}</span>/${totalQuestions}</p>`);
+  document.getElementById("score").insertAdjacentHTML("afterend", `<p>Số câu sai: <span class="incorrect">${incorrectCount}</span>/${totalQuestions}</p>`);
+
+
+  if (startTime) {
+    const seconds = Math.floor((endTime - startTime) / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    document.getElementById("duration").innerText = `Thời gian làm bài: ${minutes} phút ${remainingSeconds} giây`;
+  }
+  </script>
+</body>
+</html>
