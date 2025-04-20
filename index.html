@@ -2,57 +2,115 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Nguyễn Anh Tú - K16TH0070</title>
+  <!-- Plausible Analytics -->
+  <script defer data-domain="anhtx1u11.github.io/admintuupt.github.io/index.html" src="https://plausible.io/js/script.file-downloads.hash.outbound-links.pageview-props.revenue.tagged-events.js"></script>
+  <script>
+    window.plausible = window.plausible || function() {
+      (window.plausible.q = window.plausible.q || []).push(arguments)
+    }
+  </script>
+
+  
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: Arial, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
-      background: #f5f5f5;
-      padding-top: 100px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background-color: #f5f5f5;
+    }
+
+    .sidebar {
+      width: 250px;
+      background-color: #2c3e50;
+      color: white;
+      transition: all 0.3s;
+      padding-top: 60px;
+      position: fixed;
+      height: 100%;
+      left: 0;
+      z-index: 10;
+    }
+
+    .sidebar.hidden {
+      margin-left: -250px;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .sidebar ul {
+      list-style-type: none;
+    }
+
+    .sidebar ul a,
+    .sidebar ul li a {
+      display: block;
+      padding: 15px 20px;
+      color: white;
+      text-decoration: none;
+    }
+
+    .sidebar ul a:hover,
+    .sidebar ul li:hover {
+      background-color: #34495e;
+    }
+
+    .main {
+      flex-grow: 1;
+      margin-left: 250px;
+      padding: 2px;
+      transition: margin-left 0.3s;
+    }
+
+    .main.full {
+      margin-left: 0;
     }
 
     .header {
+      height: 100px;
+      background-color: white;
+      color: green;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 20px;
       position: fixed;
-      top: 0;
-      left: 0;
       width: 100%;
-      background: white;
+      top: 0;
       z-index: 100;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     .header-top {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       height: 60px;
-      padding: 0 15px;
-    }
-
-    .header-top h1 {
-      font-size: 18px;
-      color: green;
     }
 
     .hamburger {
-      font-size: 26px;
+      font-size: 24px;
       cursor: pointer;
-    }
-
-    .header img {
-      height: 45px;
+      margin-right: 20px;
     }
 
     .marquee-container {
-      background: red;
+      background-color: red;
       color: yellow;
+      padding: 2px 10px;
       overflow: hidden;
       white-space: nowrap;
     }
@@ -64,48 +122,28 @@
     }
 
     @keyframes marquee {
-      0% { transform: translateX(0); }
+      0%   { transform: translateX(0); }
       100% { transform: translateX(-100%); }
     }
 
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: -250px;
-      width: 250px;
-      height: 100%;
-      background: #2c3e50;
-      color: white;
-      transition: 0.3s;
-      z-index: 999;
-      padding-top: 70px;
+    .content {
+      margin-top: 120px;
     }
 
-    .sidebar.show {
-      left: 0;
-    }
-
-    .sidebar h2 {
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
       text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .sidebar a {
-      display: block;
-      padding: 12px 20px;
-      text-decoration: none;
-      color: white;
-      transition: 0.3s;
-    }
-
-    .sidebar a:hover {
-      background: #34495e;
-    }
-
-    .main {
-      padding: 20px;
-      max-width: 600px;
+      max-width: 400px;
+      width: 90%;
       margin: auto;
+    }
+
+    h3 {
+      color: #2ecc71;
+      margin-bottom: 25px;
     }
 
     .btn {
@@ -113,106 +151,123 @@
       width: 100%;
       background: #3498db;
       color: white;
-      padding: 14px;
+      padding: 15px;
       border: none;
       border-radius: 8px;
-      margin: 10px 0;
+      margin-bottom: 15px;
       font-size: 16px;
-      text-align: center;
+      cursor: pointer;
       text-decoration: none;
+      transition: background 0.3s;
+      text-align: center;
     }
 
     .btn:hover {
       background: #2980b9;
     }
 
-    .link-group {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin: 20px 0;
-    }
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        left: -250px;
+      }
 
-    .container {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      text-align: center;
-      margin-top: 30px;
-    }
+      .sidebar.show {
+        left: 0;
+      }
 
-    @media (min-width: 600px) {
-      .link-group {
-        flex-direction: row;
-        justify-content: center;
+      .main {
+        margin-left: 0;
+      }
+
+      .main.full {
+        margin-left: 0;
+      }
+
+      .btn {
+        width: 100%;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
-  <div class="sidebar" id="sidebar">
+  <div class="sidebar hidden" id="sidebar">
     <h2>Admin</h2>
-    <a href="index.html">🏠 Dashboard</a>
-    <a href="nguoidung.html">👤 Người dùng</a>
-    <a href="caidat.html">🛠 Cài đặt</a>
-    <a href="codetxt.html">💻 Code BTL1 - 6</a>
-    <a href="ip.html" target="_blank">
-      <img src="https://flagcdn.com/w40/vn.png" alt="VN" style="width: 20px; height: 15px; vertical-align: middle; margin-right: 5px;">
-      Thống kê Người Dùng
-    </a>
-    <br><br>
-    <a href="https://bom.so/fbtu" target="_blank" style="color: yellow;">👉 Liên hệ - Anh Tú</a>
+    <ul>
+      <a class="btn" href="index.html">Dashboard</a>
+      <li><a href="nguoidung.html">👤Người dùng</a></li>
+       <li><a href="catdat.html">🛠Cài Đặt</a></li>
+     <li>
+
+<li><a href="codetxt.html">💻Code BTL1 - 6</a></li>
+      <a href="ip.html" target="_blank">
+    <img src="https://flagcdn.com/w40/vn.png" alt="VN" style="width: 20px; height: 15px; vertical-align: middle; margin-right: 5px;">
+    Thống kê Người Dùng
+  </a>
+</li>
+      <br><br><br><br><br><br>
+      <li><a href="https://Bom.so/fbtu" target="_blank" style="color: yellow;">👉 Liên Hệ - Anh Tú</a></li>
+    </ul>
   </div>
 
-  <!-- Header -->
-  <div class="header">
-    <div class="header-top">
-      <span class="hamburger" onclick="toggleSidebar()">☰</span>
-      <h1>Website - K16TH0070</h1>
-      <img src="fit2.jpg" alt="Logo">
-    </div>
-    <div class="marquee-container">
-      <div class="marquee-text">🎉 Chào mừng ngày Giải Phóng Miền Nam 30 - 4 🎉</div>
-    </div>
-  </div>
 
-  <!-- Main Content -->
-  <div class="main">
-    <h2 style="text-align: center; color: #2ecc71;">Chào mừng bạn đến với trang admin!</h2>
-
-    <div class="link-group">
-      <a class="btn" href="https://upt.edu.vn" style="background: yellowgreen; color: blue;">Website UPT</a>
-      <a class="btn" href="https://fit.upt.edu.vn" style="background: brown; color: yellow;">Website FIT-UPT</a>
+  <div class="main full" id="main">
+    <div class="header">
+      <div class="header-top">
+        <span class="hamburger" onclick="toggleSidebar()">☰</span>
+        <h1 style="flex-grow: 1;">Website - K16THO0070</h1>
+        <img src="fit2.jpg" alt="UPT Logo" style="height: 60px; margin-left: auto;">
+      </div>
+      <div class="marquee-container">
+        <div class="marquee-text">🎉 Chào mừng ngày Giải Phóng Miền Nam 30 - 4 🎉</div>
+      </div>
     </div>
 
-    <p style="text-align: center;">Đây là nơi quản lý người dùng, nội dung và nhiều chức năng khác.</p>
+    <div class="content">
+      <h2 style="text-align: center;color: #2ecc71;">Chào mừng bạn đến với trang admin!</h2>
 
-    <div class="link-group" style="margin-top: 30px;">
-      <a class="btn" href="macle.html" style="background: rgb(0, 89, 255);">Mác-Lê-Nin</a>
-      <a class="btn" href="404.html" style="background: blueviolet;">Tiếng Anh</a>
-      <a class="btn" href="404.html" style="background: bisque; color: red;">PLDC</a>
-    </div>
+      <div style="display: flex; gap: 10px; justify-content: center; margin: 20px 0;">
+        <a class="btn" href="https://upt.edu.vn" style="background: yellowgreen; color: blue;">Website UPT</a>
+        <a class="btn" href="https://fit.upt.edu.vn" style="background: brown; color: yellow;">Website FIT-UPT</a>
+      </div>
 
-    <div class="container">
-      <h3>📊 Thống kê truy cập</h3>
-      <p>Địa chỉ IP của bạn là: <span id="user-ip">Đang tải...</span></p>
+      <p style="text-align: center;">Đây là nơi quản lý người dùng, nội dung và nhiều chức năng khác.</p>
+
+      <br><br>
+
+      <div style="text-align: center;">
+        <a class="btn" href="macle.html" style="background: rgb(0, 89, 255); color: white;">Mác-Lê-Nin</a>
+        <a class="btn" href="404.html" style="background: blueviolet; color: white;">Tiếng Anh</a>
+        <a class="btn" href="404.html" style="background: bisque; color: red;">PLDC</a>
+      </div>
+
+      <!-- PHẦN THỐNG KÊ IP -->
+      <div class="container" id="thongke" style="margin-top: 30px;">
+        <h3>📊 Thống kê truy cập</h3>
+        <p>Địa chỉ IP của bạn là: <span id="user-ip">Đang tải...</span></p>
+      </div>
+
     </div>
   </div>
 
   <script>
     function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('show');
+      const sidebar = document.getElementById('sidebar');
+      const main = document.getElementById('main');
+      sidebar.classList.toggle('hidden');
+      sidebar.classList.toggle('show');
+      main.classList.toggle('full');
     }
 
+    // LẤY IP NGƯỜI DÙNG
     fetch('https://api.ipify.org?format=json')
       .then(response => response.json())
       .then(data => {
         document.getElementById('user-ip').textContent = data.ip;
       })
-      .catch(() => {
+      .catch(error => {
+        console.error('Lỗi khi lấy IP:', error);
         document.getElementById('user-ip').textContent = 'Không thể lấy IP';
       });
   </script>
