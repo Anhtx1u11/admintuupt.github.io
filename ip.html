@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Danh Sách IP Thành Viên Đã Vào</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
@@ -15,7 +16,7 @@
     }
 
     .overlay {
-      background-color: rgba(255, 255, 255, 0.85);
+      background-color: rgba(255, 255, 255, 0.88);
       backdrop-filter: blur(4px);
     }
 
@@ -24,23 +25,23 @@
     }
 
     .ip-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.08);
     }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center px-4">
-  <div class="overlay shadow-2xl rounded-3xl p-8 w-full max-w-5xl border border-gray-300">
-    <div class="flex items-center justify-between mb-6">
-      <h1 class="text-4xl font-extrabold text-gray-800">📡 Danh Sách IP Việt Nam</h1>
-      <img src="https://flagcdn.com/w40/vn.png" alt="VN Flag" class="w-8 h-6">
+<body class="min-h-screen flex items-center justify-center px-2 sm:px-4">
+  <div class="overlay shadow-2xl rounded-3xl p-4 sm:p-6 w-full max-w-6xl border border-gray-300">
+    <div class="flex items-center justify-between mb-4 sm:mb-6">
+      <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-800">📡 Danh Sách IP Việt Nam</h1>
+      <img src="https://flagcdn.com/w40/vn.png" alt="VN Flag" class="w-6 h-4 sm:w-8 sm:h-6">
     </div>
 
-    <div id="ipList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 text-base">
+    <div id="ipList" class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-5 text-sm sm:text-base">
       <!-- IP Cards sẽ được thêm ở đây -->
     </div>
 
-    <p class="text-center text-gray-500 mt-6 text-sm italic">⏳ Tự động cập nhật mỗi 10 giây</p>
+    <p class="text-center text-gray-500 mt-4 sm:mt-6 text-xs sm:text-sm italic">⏳ Tự động cập nhật mỗi 10 giây</p>
   </div>
 
   <script>
@@ -53,9 +54,9 @@
       ipList.innerHTML = '';
       for (let i = 0; i < 20; i++) {
         const div = document.createElement('div');
-        div.className = 'ip-card bg-white/90 border border-gray-200 rounded-xl p-4 flex items-center gap-3 shadow-sm hover:bg-white';
+        div.className = 'ip-card bg-white/90 border border-gray-200 rounded-xl p-3 flex items-center gap-2 shadow-sm hover:bg-white';
         div.innerHTML = `
-          <img src="https://flagcdn.com/w40/vn.png" alt="VN Flag" class="w-6 h-4">
+          <img src="https://flagcdn.com/w40/vn.png" alt="VN Flag" class="w-5 h-3">
           <span class="text-gray-700 font-medium">${randomIP()}</span>
         `;
         ipList.appendChild(div);
