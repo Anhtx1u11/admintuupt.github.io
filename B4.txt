@@ -1,0 +1,397 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            menu();
+            
+        }
+        static void menu()
+        {
+            
+            Console.OutputEncoding = Encoding.UTF8;
+            Console.WriteLine("Code C# Bài While ");
+            Console.WriteLine("1.Bài:1 Tính Tổng");
+            Console.WriteLine("2.Bài:2 Nhập Tử And Mẫu ");
+            Console.WriteLine("3.Bài:3 Nhập Số In Ra Chữ Số");
+            Console.WriteLine("4.Bài:4 Tính Tổng");
+            Console.WriteLine("5.Bài:5 Menu Đồ Uống");
+            Console.Write("Chọn Bài: ");
+            int chon = int.Parse(Console.ReadLine());
+            Console.Clear();
+            switch (chon)
+            {
+                case 1:
+                    bai1();
+                    break;
+                case 2:
+                    bai2();
+                    break;
+                case 3:
+                    bai3();
+                    break;
+                case 4:
+                    bai4();
+                    break;
+                case 5:
+                    bai5();
+                    break;
+
+            }
+
+        }
+        static void bai1()
+        {
+            while (true)
+            {
+
+                int s4 = 0;
+                int s5 = 0;
+                int s6 = 0;
+                Console.Write("Nhập n: ");
+                int n = int.Parse(Console.ReadLine());
+                while (n <= 0)
+                {
+                    Console.WriteLine("Nhập Lại");
+                    n = int.Parse(Console.ReadLine());
+                }
+
+                for (int i = 1; i <= n; i++)
+                {
+                    s4 += i * i;
+
+                }
+                for (int i = 0; i <= n; i++)
+                {
+                    s5 += (2 * i + 1) * (2 * i + 1) * (2 * i + 1);
+                }
+                for (int i = 0; i <= n; i++)
+                {
+                    s6 += (2 * i) * (2 * i) * (2 * i) * (2 * i);
+                }
+                Console.WriteLine($"S4 = {s4}");
+                Console.WriteLine($"S5 = {s5}");
+                Console.WriteLine($"S6 = {s6}\n");
+                Console.WriteLine("Tiếp Tục Nhập 1 Về Menu Nhập 0");
+                int chonbai1 = int.Parse(Console.ReadLine());
+                Console.Clear();
+                if (chonbai1 == 0)
+                {
+                    menu();
+                }
+
+
+            }
+        }
+        static void bai2()
+        {
+            Console.Write("Nhập Tử: ");
+            int tu = int.Parse(Console.ReadLine());
+            Console.Write("Nhập Mẫu: ");
+            int mau = int.Parse(Console.ReadLine());
+            Console.Clear();
+            while (mau == 0)
+            {
+                Console.Write("Mẫu Khác 0 Hãy Nhập Lại: ");
+                mau = int.Parse(Console.ReadLine());
+            }
+            Console.WriteLine($"Mẫu Và Tủ Bạn Nhập Là: {tu}");
+            Console.WriteLine($"\t\t       -");
+            Console.WriteLine($"                       {mau}");
+            Console.WriteLine("Tiếp Tục Nhập 1 Về Menu Nhập 0");
+            int chonbai2 = int.Parse(Console.ReadLine());
+            Console.Clear();
+            if (chonbai2 == 0)
+            {
+                menu();
+            }
+
+
+        }
+        static void bai3()
+        {
+            while (true)
+            {
+
+                Console.Write("Nhập n Gồm 4 Chữ Số: ");
+                int n = int.Parse(Console.ReadLine());
+                while (n < 1000 || n > 10000)
+                {
+                    Console.WriteLine("Vui Lòng Nhập Lại Từ 1000 - 9999");
+                    n = int.Parse(Console.ReadLine());
+                    Console.Clear();
+                }
+                int so1 = n / 1000;
+                int so2 = (n / 100) % 10;
+                int so3 = (n / 10) % 10;
+                int so4 = (n % 100) % 10;
+
+
+
+                switch (so1)
+                {
+                    case 0:
+                        Console.Write("Không ");
+                        break;
+                    case 1:
+                        Console.Write("Một ");
+                        break;
+                    case 2:
+                        Console.Write("Hai ");
+                        break;
+                    case 3:
+                        Console.Write("Ba ");
+                        break;
+                    case 4:
+                        Console.Write("Bốn ");
+                        break;
+                    case 5:
+                        Console.Write("Năm ");
+                        break;
+                    case 6:
+                        Console.Write("Sáu ");
+                        break;
+                    case 7:
+                        Console.Write("Bảy ");
+                        break;
+                    case 8:
+                        Console.Write("Tám ");
+                        break;
+                    case 9:
+                        Console.Write("Chín ");
+                        break;
+                }
+                switch (so2)
+                {
+                    case 0:
+                        Console.Write("Không ");
+                        break;
+                    case 1:
+                        Console.Write("Một ");
+                        break;
+                    case 2:
+                        Console.Write("Hai ");
+                        break;
+                    case 3:
+                        Console.Write("Ba ");
+                        break;
+                    case 4:
+                        Console.Write("Bốn ");
+                        break;
+                    case 5:
+                        Console.Write("Năm ");
+                        break;
+                    case 6:
+                        Console.Write("Sáu ");
+                        break;
+                    case 7:
+                        Console.Write("Bảy ");
+                        break;
+                    case 8:
+                        Console.Write("Tám ");
+                        break;
+                    case 9:
+                        Console.Write("Chín ");
+                        break;
+                }
+                switch (so3)
+                {
+                    case 0:
+                        Console.Write("Không ");
+                        break;
+                    case 1:
+                        Console.Write("Một ");
+                        break;
+                    case 2:
+                        Console.Write("Hai ");
+                        break;
+                    case 3:
+                        Console.Write("Ba ");
+                        break;
+                    case 4:
+                        Console.Write("Bốn ");
+                        break;
+                    case 5:
+                        Console.Write("Năm ");
+                        break;
+                    case 6:
+                        Console.Write("Sáu ");
+                        break;
+                    case 7:
+                        Console.Write("Bảy ");
+                        break;
+                    case 8:
+                        Console.Write("Tám ");
+                        break;
+                    case 9:
+                        Console.Write("Chín ");
+                        break;
+                }
+                switch (so4)
+                {
+                    case 0:
+                        Console.Write("Không ");
+                        break;
+                    case 1:
+                        Console.Write("Một ");
+                        break;
+                    case 2:
+                        Console.Write("Hai ");
+                        break;
+                    case 3:
+                        Console.Write("Ba ");
+                        break;
+                    case 4:
+                        Console.Write("Bốn ");
+                        break;
+                    case 5:
+                        Console.Write("Năm ");
+                        break;
+                    case 6:
+                        Console.Write("Sáu ");
+                        break;
+                    case 7:
+                        Console.Write("Bảy ");
+                        break;
+                    case 8:
+                        Console.Write("Tám ");
+                        break;
+                    case 9:
+                        Console.Write("Chín ");
+                        break;
+                }
+                Console.WriteLine("\nTiếp Tục Nhập 1 Về Menu Nhập 0");
+                int chonbai3 = int.Parse(Console.ReadLine());
+                Console.Clear();
+                if (chonbai3 == 0)
+                {
+                    menu();
+                }
+            }
+        }
+        static void bai4()
+        {
+            while (true)
+            {
+                int sum = 0;
+                Console.Write("Nhập n Số Để Tính Tổng: ");
+                int tinh = int.Parse(Console.ReadLine());
+
+                for (int i = 1; i <= tinh; i++)
+                {
+
+                    sum += i;
+                }
+                Console.WriteLine($"Tổng Các Số Từ 1 - {tinh} Là: {sum} ");
+                Console.WriteLine("\nTiếp Tục Nhập 1 Về Menu Nhập 0");
+                int chonbai4 = int.Parse(Console.ReadLine());
+                Console.Clear();
+                if (chonbai4 == 0)
+                {
+                    menu();
+                }
+            }
+
+        }
+        static void bai5()
+        {
+            while (true)
+            {
+                Console.Write("Chào Mừng Bạn Đến Với Quán ");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write("AnhTu-Coder");
+                Console.ResetColor();
+                Console.WriteLine("\n\nMenu Của Quán");
+                Console.WriteLine("1. Cafe");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("2. Cam Vắt");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("3. Nước Ép Hoa Quả ");
+                Console.ResetColor();
+                Console.WriteLine("4. Nước Lọc");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("5. Nước Dừa");
+                Console.ResetColor();
+                Console.Write("Bạn Chọn Loại Số Mấy: ");
+                int chon = int.Parse(Console.ReadLine());
+                while (chon < 0 || chon > 6)
+                {
+                    Console.Write("Hãy Chọn Lại Từ 1 - 6: ");
+                    chon = int.Parse(Console.ReadLine());
+                }
+                Console.Clear();
+                switch (chon)
+                {
+                    case 1:
+                        Console.WriteLine("Cafe 15k /1");
+                        Console.Write("Bạn Mua Mấy Ly: ");
+                        int cafe = int.Parse(Console.ReadLine());
+                        Console.WriteLine($"Thành Tiền: {15000 * cafe:N0} VND");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Vui Lòng Chuyển Khoản Vào Ngân Hàng Dưới:");
+                        Console.WriteLine("Ngân Hàng: MB BANK");
+                        Console.WriteLine("STK: 913141516");
+                        Console.WriteLine("Tên: Nguyên Anh Tú");
+                        Console.ResetColor();
+                        break;
+                    case 2:
+                        Console.WriteLine("Cafe 15k /1");
+                        Console.Write("Bạn Mua Mấy Ly: ");
+                        int cam = int.Parse(Console.ReadLine());
+                        Console.WriteLine($"Thành Tiền: {15000 * cam:N0} VND");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Vui Lòng Chuyển Khoản Vào Ngân Hàng Dưới:");
+                        Console.WriteLine("Ngân Hàng: MB BANK");
+                        Console.WriteLine("STK: 913141516");
+                        Console.WriteLine("Tên: Nguyên Anh Tú");
+                        Console.ResetColor();
+                        break;
+                    case 3:
+                        Console.WriteLine("Nước Ép Hoa Quả 35k /1");
+                        Console.Write("Bạn Mua Mấy Ly: ");
+                        int nuocep = int.Parse(Console.ReadLine());
+                        Console.WriteLine($"Thành Tiền: {35000 * nuocep:N0} VND");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Vui Lòng Chuyển Khoản Vào Ngân Hàng Dưới:");
+                        Console.WriteLine("Ngân Hàng: MB BANK");
+                        Console.WriteLine("STK: 913141516");
+                        Console.WriteLine("Tên: Nguyên Anh Tú");
+                        Console.ResetColor();
+                        break;
+                    case 4:
+                        Console.WriteLine("Nước Lọc Awafina 10k /1");
+                        Console.Write("Bạn Mua Mấy Ly: ");
+                        int nuoc = int.Parse(Console.ReadLine());
+                        Console.WriteLine($"Thành Tiền: {10000 * nuoc:N0} VND");
+                        break;
+                    case 5:
+                        Console.WriteLine("Nước Dừa 15k /1");
+                        Console.Write("Bạn Mua Mấy Ly: ");
+                        int nuocdua = int.Parse(Console.ReadLine());
+                        Console.WriteLine($"Thành Tiền: {15000 * nuocdua:N0} VND");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Vui Lòng Chuyển Khoản Vào Ngân Hàng Dưới:");
+                        Console.WriteLine("Ngân Hàng: MB BANK");
+                        Console.WriteLine("STK: 913141516");
+                        Console.WriteLine("Tên: Nguyên Anh Tú");
+                        Console.ResetColor();
+                        break;
+                }
+                Console.WriteLine("\nTiếp Tục Mua Nhập 1 || Về Menu Nhập 0");
+                int chonbai5 = int.Parse(Console.ReadLine());
+                Console.Clear();
+                if (chonbai5 == 0)
+                {
+                    menu();
+                }
+            }
+        }
+    }
+}
