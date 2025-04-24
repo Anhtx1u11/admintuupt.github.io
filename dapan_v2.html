@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đáp án</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #e0f7fa;
+            color: #006064;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #00838f;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .result-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #b2ebf2;
+            border-radius: 4px;
+            background-color: #e0f2f7;
+        }
+        .user-answer {
+            font-weight: bold;
+            color: #1de9b6;
+        }
+        .correct-answer {
+            font-weight: bold;
+            color: #4caf50;
+        }
+        .wrong-answer {
+            font-weight: bold;
+            color: #f44336;
+        }
+        .score {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: center;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kết quả</h1>
+        <div id="results">
+        </div>
+        <div id="final-score" class="score"></div>
+        <button onclick="window.location.href='macle_v2.html'">Làm lại</button>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const resultsDiv = document.getElementById('results');
+        const finalScoreDiv = document.getElementById('final-score');
+        const correctAnswers = {
+            q1: 'b',
+            q2: 'a',
+            q3: 'b',
+            q4: 'a',
+            q5: 'b',
+            q6: 'b',
+            q7: 'b',
+            q8: 'b',
+            q9: 'b',
+            q10: 'd',
+            q11: 'b',
+            q12: 'd',
+            q13: 'c',
+            q14: 'b',
+            q15: 'b',
+            q16: 'a',
+            q17: 'b'
+        };
+
+        let score = 0;
+
+        for (let i = 1; i <= 17; i++) {
+            const questionId = `q${i}`;
+            const userAnswer = urlParams.get(questionId);
+            const correctAnswer = correctAnswers[questionId];
+
+            const resultItem = document.createElement('div');
+            resultItem.classList.add('result-item');
+            resultItem.innerHTML = `
+                <p>Câu ${i}:</p>
+                <p>Bạn chọn: <span class="user-answer">${userAnswer ? userAnswer.toUpperCase() : 'Chưa trả lời'}</span></p>
+                <p>Đáp án đúng: <span class="correct-answer">${correctAnswer.toUpperCase()}</span></p>
+            `;
+
+            if (userAnswer && userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+                score += 0.5; // Cộng 0.5 điểm cho mỗi câu trả lời đúng
+            } else if (userAnswer) {
+                const userAnswerSpan = resultItem.querySelector('.user-answer');
+                userAnswerSpan.classList.add('wrong-answer');
+            }
+
+            resultsDiv.appendChild(resultItem);
+        }
+
+        finalScoreDiv.textContent = `Tổng điểm: ${score} / 8.5`; // Hiển thị tổng điểm
+    </script>
+</body>
+</html>
