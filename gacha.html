@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>🎯 Vòng Quay May Mắn - CNTT</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      overflow: hidden;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: 600;
+    }
+
+    #container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    #nameList {
+      width: 240px;
+      height: 500px;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 12px;
+      font-size: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    canvas {
+      background-color: #222;
+      border-radius: 50%;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+
+    #btnSpin, #btnMusic {
+      margin: 20px 10px 0;
+      padding: 12px 30px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: #00bcd4;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 3px 5px rgba(0,0,0,0.3);
+    }
+
+    #btnSpin:hover, #btnMusic:hover {
+      background: #0097a7;
+    }
+
+    #controls {
+      text-align: center;
+    }
+
+    #result {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      max-width: 650px;
+      margin-inline: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    iframe {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎯 Vòng Quay May Mắn - Công Nghệ Thông Tin</h1>
+
+  <div id="container">
+    <div id="nameList"></div>
+    <canvas id="wheel" width="500" height="500"></canvas>
+  </div>
+
+  <div id="controls">
+    <button id="btnSpin">🎲 Quay Ngay</button>
+    <button id="btnMusic">🎵 Bật nhạc nền</button>
+  </div>
+
+  <div id="result"></div>
+
+  <!-- Âm thanh -->
+  <audio id="spinSound" src="spin.mp3" preload="auto"></audio>
+  <audio id="winSound" src="win.mp3" preload="auto"></audio>
+
+  <!-- Nhúng YouTube player ẩn -->
+  <iframe id="ytplayer" type="text/html" width="0" height="0"
+    src="https://www.youtube.com/embed/u6DMfRoX9-M?enablejsapi=1&loop=1&playlist=u6DMfRoX9-M"
+    frameborder="0" allow="autoplay"></iframe>
+
+  <script>
+    const names = [
+      "Lê Quốc Chung", "Nguyễn Hồng Cung", "Nguyễn Hữu Đại", "Mang Huỳnh Tấn Dũng", "Nguyễn Hữu Dương",
+      "Nguyễn Huy Hoàng", "Trần Vũ Hoàng", "Đoàn Ngọc Quốc Huy", "Hồ Tấn Huy", "Lê Quốc Huy",
+      "Phạm Đăng Huy", "Nguyễn Đăng Khoa", "Lê Thị Thanh Liên", "Nguyễn Thị Hồng Nhạn", "Lê Minh Nhật",
+      "Võ Phùng Minh Nhật", "Vũ Minh Nhật", "Lê Ngọc Phi", "Lưu Văn Hoàng Phúc", "Nguyễn Bá Ngọc Hoàng Phương",
+      "Trần Ngọc Nhật Tân", "Nguyễn Thanh Tấn", "Ngô Gia Thành", "Phạm Trường Thống", "Nguyễn Trần Vĩnh Thuận",
+      "Thông Minh Thuận", "Nguyễn Trọng Tiến", "Lương Lê Tín", "Trần Hữu Trung", "Lê Vũ", "Đoàn Quang Vương"
+    ];
+
+    const selected = [];
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
+    const resultDiv = document.getElementById("result");
+    const spinSound = document.getElementById("spinSound");
+    const winSound = document.getElementById("winSound");
+    const nameListDiv = document.getElementById("nameList");
+
+    nameListDiv.innerHTML = `<strong>Danh sách:</strong><br><ul style="padding-left: 18px;">${
+      names.map(n => `<li>${n}</li>`).join("")
+    }</ul>`;
+
+    let spinning = false;
+    let angle = 0;
+    const radius = 250;
+
+    function drawWheel() {
+      const step = 2 * Math.PI / names.length;
+
+      for (let i = 0; i < names.length; i++) {
+        ctx.beginPath();
+        ctx.moveTo(250, 250);
+        ctx.fillStyle = i % 2 === 0 ? "#4db6ac" : "#00897b";
+        ctx.arc(250, 250, radius, angle + step * i, angle + step * (i + 1));
+        ctx.fill();
+        ctx.save();
+
+        ctx.translate(250, 250);
+        ctx.rotate(angle + step * i + step / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "white";
+        ctx.font = "14px sans-serif";
+        ctx.fillText(names[i], radius - 10, 4);
+        ctx.restore();
+      }
+
+      ctx.beginPath();
+      ctx.arc(250, 250, 10, 0, Math.PI * 2);
+      ctx.fillStyle = "#fff";
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(250, 0);
+      ctx.lineTo(240, 20);
+      ctx.lineTo(260, 20);
+      ctx.fillStyle = "red";
+      ctx.fill();
+    }
+
+    function spin() {
+      if (spinning || selected.length >= 8) return;
+
+      spinning = true;
+      let spinAngle = Math.random() * 360 + 3600;
+      let duration = 5000;
+      let start = null;
+
+      spinSound.currentTime = 0;
+      spinSound.play();
+
+      function animate(timestamp) {
+        if (!start) start = timestamp;
+        const progress = timestamp - start;
+        const ease = 1 - Math.pow(1 - progress / duration, 3);
+        const currentAngle = spinAngle * ease;
+
+        angle = (currentAngle * Math.PI / 180) % (Math.PI * 2);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawWheel();
+
+        if (progress < duration) {
+          requestAnimationFrame(animate);
+        } else {
+          spinSound.pause();
+          spinSound.currentTime = 0;
+
+          let index = names.length - Math.floor((angle / (2 * Math.PI)) * names.length) - 1;
+          if (index < 0) index += names.length;
+
+          let name = names[index];
+          if (selected.includes(name)) {
+            spinning = false;
+            spin(); // quay lại
+          } else {
+            selected.push(name);
+            winSound.play();
+            resultDiv.innerHTML = `<strong>Đã chọn (${selected.length}/8):</strong><br>${selected.map((n, i) => `${i + 1}. ${n}`).join("<br>")}`;
+            spinning = false;
+          }
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    drawWheel();
+    document.getElementById("btnSpin").addEventListener("click", spin);
+
+    // Điều khiển YouTube nhạc nền
+    let musicPlaying = false;
+    const btnMusic = document.getElementById("btnMusic");
+    const ytPlayer = document.getElementById("ytplayer");
+
+    function postToPlayer(command) {
+      ytPlayer.contentWindow.postMessage(
+        JSON.stringify({ event: "command", func: command, args: [] }),
+        "*"
+      );
+    }
+
+    btnMusic.addEventListener("click", () => {
+      if (!musicPlaying) {
+        postToPlayer("playVideo");
+        btnMusic.textContent = "⏸ Tắt nhạc nền";
+      } else {
+        postToPlayer("pauseVideo");
+        btnMusic.textContent = "🎵 Bật nhạc nền";
+      }
+      musicPlaying = !musicPlaying;
+    });
+  </script>
+</body>
+</html>
