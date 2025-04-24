@@ -2,51 +2,67 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>🎯 Vòng Quay May Mắn - CNTT</title>
+  <title>🎯 Vòng Quay May Mắn - Mobile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #1e3c72, #2a5298);
       color: white;
-      overflow: hidden;
+      overflow-x: hidden;
     }
 
     h1 {
       text-align: center;
-      margin-top: 20px;
-      font-weight: 600;
+      margin: 15px 10px;
+      font-size: 22px;
     }
 
     #container {
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 20px;
-      gap: 20px;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px;
+      gap: 15px;
     }
 
     #nameList {
-      width: 240px;
-      height: 500px;
+      width: 90%;
+      max-height: 200px;
       overflow-y: auto;
       background: rgba(255, 255, 255, 0.1);
-      padding: 15px;
-      border-radius: 12px;
-      font-size: 15px;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 14px;
       box-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
 
     canvas {
       background-color: #222;
       border-radius: 50%;
-      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+      width: 90vw;
+      height: 90vw;
+      max-width: 360px;
+      max-height: 360px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
 
-    #btnSpin, #btnMusic {
-      margin: 20px 10px 0;
-      padding: 12px 30px;
-      font-size: 16px;
+    #controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 15px;
       border: none;
       border-radius: 8px;
       background: #00bcd4;
@@ -55,55 +71,39 @@
       box-shadow: 0 3px 5px rgba(0,0,0,0.3);
     }
 
-    #btnSpin:hover, #btnMusic:hover {
+    button:hover {
       background: #0097a7;
-    }
-
-    #controls {
-      text-align: center;
     }
 
     #result {
       text-align: center;
-      margin-top: 20px;
-      font-size: 16px;
+      margin: 15px 10px;
+      font-size: 15px;
       background: rgba(255, 255, 255, 0.1);
-      padding: 15px;
+      padding: 10px;
       border-radius: 10px;
-      max-width: 650px;
-      margin-inline: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    }
-
-    iframe {
-      display: none;
+      max-width: 90%;
+      box-shadow: 0 0 8px rgba(0,0,0,0.2);
     }
   </style>
 </head>
 <body>
 
-  <h1>🎯 Vòng Quay May Mắn - Công Nghệ Thông Tin</h1>
+  <h1>🎯 Vòng Quay May Mắn</h1>
 
   <div id="container">
+    <canvas id="wheel" width="400" height="400"></canvas>
     <div id="nameList"></div>
-    <canvas id="wheel" width="500" height="500"></canvas>
   </div>
 
   <div id="controls">
-    <button id="btnSpin">🎲 Quay Ngay</button>
-    <button id="btnMusic">🎵 Bật nhạc nền</button>
+    <button id="btnSpin">🎲 Quay</button>
+    <button id="btnMusic">🎵 Nhạc</button>
   </div>
 
   <div id="result"></div>
 
-  <!-- Âm thanh -->
-  <audio id="spinSound" src="spin.mp3" preload="auto"></audio>
-  <audio id="winSound" src="win.mp3" preload="auto"></audio>
-
-  <!-- Nhúng YouTube player ẩn -->
-  <iframe id="ytplayer" type="text/html" width="0" height="0"
-    src="https://www.youtube.com/embed/u6DMfRoX9-M?enablejsapi=1&loop=1&playlist=u6DMfRoX9-M"
-    frameborder="0" allow="autoplay"></iframe>
+  <audio id="bgMusic" src="nhac.m4a" loop preload="auto"></audio>
 
   <script>
     const names = [
@@ -119,8 +119,7 @@
     const canvas = document.getElementById("wheel");
     const ctx = canvas.getContext("2d");
     const resultDiv = document.getElementById("result");
-    const spinSound = document.getElementById("spinSound");
-    const winSound = document.getElementById("winSound");
+    const bgMusic = document.getElementById("bgMusic");
     const nameListDiv = document.getElementById("nameList");
 
     nameListDiv.innerHTML = `<strong>Danh sách:</strong><br><ul style="padding-left: 18px;">${
@@ -129,51 +128,40 @@
 
     let spinning = false;
     let angle = 0;
-    const radius = 250;
+    const radius = 200;
 
     function drawWheel() {
       const step = 2 * Math.PI / names.length;
-
       for (let i = 0; i < names.length; i++) {
         ctx.beginPath();
-        ctx.moveTo(250, 250);
+        ctx.moveTo(200, 200);
         ctx.fillStyle = i % 2 === 0 ? "#4db6ac" : "#00897b";
-        ctx.arc(250, 250, radius, angle + step * i, angle + step * (i + 1));
+        ctx.arc(200, 200, radius, angle + step * i, angle + step * (i + 1));
         ctx.fill();
         ctx.save();
-
-        ctx.translate(250, 250);
+        ctx.translate(200, 200);
         ctx.rotate(angle + step * i + step / 2);
         ctx.textAlign = "right";
         ctx.fillStyle = "white";
-        ctx.font = "14px sans-serif";
+        ctx.font = "12px sans-serif";
         ctx.fillText(names[i], radius - 10, 4);
         ctx.restore();
       }
 
+      // Tâm
       ctx.beginPath();
-      ctx.arc(250, 250, 10, 0, Math.PI * 2);
+      ctx.arc(200, 200, 10, 0, Math.PI * 2);
       ctx.fillStyle = "#fff";
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.moveTo(250, 0);
-      ctx.lineTo(240, 20);
-      ctx.lineTo(260, 20);
-      ctx.fillStyle = "red";
       ctx.fill();
     }
 
     function spin() {
       if (spinning || selected.length >= 8) return;
-
       spinning = true;
-      let spinAngle = Math.random() * 360 + 3600;
-      let duration = 5000;
-      let start = null;
 
-      spinSound.currentTime = 0;
-      spinSound.play();
+      const spinAngle = Math.random() * 360 + 3600;
+      const duration = 4500;
+      let start = null;
 
       function animate(timestamp) {
         if (!start) start = timestamp;
@@ -188,22 +176,15 @@
         if (progress < duration) {
           requestAnimationFrame(animate);
         } else {
-          spinSound.pause();
-          spinSound.currentTime = 0;
+          const fixedAngle = (2 * Math.PI - angle + Math.PI / 2) % (2 * Math.PI);
+          const step = 2 * Math.PI / names.length;
+          const index = Math.floor(fixedAngle / step);
+          const name = names[index];
 
-          let index = names.length - Math.floor((angle / (2 * Math.PI)) * names.length) - 1;
-          if (index < 0) index += names.length;
+          if (!selected.includes(name)) selected.push(name);
 
-          let name = names[index];
-          if (selected.includes(name)) {
-            spinning = false;
-            spin(); // quay lại
-          } else {
-            selected.push(name);
-            winSound.play();
-            resultDiv.innerHTML = `<strong>Đã chọn (${selected.length}/8):</strong><br>${selected.map((n, i) => `${i + 1}. ${n}`).join("<br>")}`;
-            spinning = false;
-          }
+          resultDiv.innerHTML = `<strong>Người được chọn:</strong><br><h2 style="color: yellow;">${name}</h2><br><strong>Đã chọn (${selected.length}/8):</strong><br>${selected.map((n, i) => `${i + 1}. ${n}`).join("<br>")}`;
+          spinning = false;
         }
       }
 
@@ -213,25 +194,14 @@
     drawWheel();
     document.getElementById("btnSpin").addEventListener("click", spin);
 
-    // Điều khiển YouTube nhạc nền
     let musicPlaying = false;
-    const btnMusic = document.getElementById("btnMusic");
-    const ytPlayer = document.getElementById("ytplayer");
-
-    function postToPlayer(command) {
-      ytPlayer.contentWindow.postMessage(
-        JSON.stringify({ event: "command", func: command, args: [] }),
-        "*"
-      );
-    }
-
-    btnMusic.addEventListener("click", () => {
+    document.getElementById("btnMusic").addEventListener("click", () => {
       if (!musicPlaying) {
-        postToPlayer("playVideo");
-        btnMusic.textContent = "⏸ Tắt nhạc nền";
+        bgMusic.play();
+        document.getElementById("btnMusic").textContent = "⏸ Tắt nhạc";
       } else {
-        postToPlayer("pauseVideo");
-        btnMusic.textContent = "🎵 Bật nhạc nền";
+        bgMusic.pause();
+        document.getElementById("btnMusic").textContent = "🎵 Nhạc";
       }
       musicPlaying = !musicPlaying;
     });
