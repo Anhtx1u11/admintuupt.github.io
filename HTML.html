@@ -2,6 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bài kiểm tra Kinh Tế Chính Trị (108 câu hỏi)</title>
   <style>
     body {
@@ -14,6 +15,7 @@
       text-align: center;
       color: #333;
       margin-bottom: 30px;
+      font-size: 24px;
     }
     .question {
       background: #ffffff;
@@ -25,16 +27,18 @@
     .question h3 {
       margin-bottom: 15px;
       color: #444;
+      font-size: 18px;
     }
     .answers label {
       display: block;
-      padding: 8px 12px;
-      margin-bottom: 8px;
+      padding: 10px 15px;
+      margin-bottom: 10px;
       border: 1px solid #ddd;
-      border-radius: 5px;
+      border-radius: 8px;
       background: #fafafa;
       cursor: pointer;
       transition: background 0.3s;
+      font-size: 16px;
     }
     .answers label:hover {
       background: #e6f7ff;
@@ -49,6 +53,8 @@
     }
     #submit {
       display: block;
+      width: 90%;
+      max-width: 300px;
       margin: 30px auto;
       padding: 15px 30px;
       font-size: 20px;
@@ -70,6 +76,26 @@
       color: #333;
       font-weight: bold;
     }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 20px;
+      }
+      .question h3 {
+        font-size: 16px;
+      }
+      .answers label {
+        font-size: 15px;
+        padding: 8px 12px;
+      }
+      #submit {
+        font-size: 18px;
+        padding: 12px 20px;
+      }
+      #result {
+        font-size: 20px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -80,9 +106,7 @@
 <div id="result"></div>
 
 <script>
-// ==========================
-// Dữ liệu câu hỏi (ví dụ)
-// ==========================
+// Quiz data
 const quizData = [
   {
     "question": "1/ Các xí nghiệp tư bản vẫn giữ độc lập về sản xuất, còn mọi việc mua, bán do một ban quản trị chung đảm nhận là hình thức tổ chức độc quyền nào?",
@@ -1166,12 +1190,8 @@ const quizData = [
   }
 ];
 
-// ==========================
-// Giao diện và xử lý
-// ==========================
 const quizContainer = document.getElementById('quiz');
 
-// Tạo giao diện câu hỏi
 quizData.forEach((item, index) => {
   const questionDiv = document.createElement('div');
   questionDiv.classList.add('question');
@@ -1185,7 +1205,7 @@ quizData.forEach((item, index) => {
 
   ['a', 'b', 'c', 'd'].forEach((letter, idx) => {
     const label = document.createElement('label');
-    label.innerHTML = `<input type="radio" name="q${index}" value="${letter}"> ${item.options[idx] || ''}`;
+    label.innerHTML = `<input type="radio" name="q${index}" value="${letter}"> ${item.options[idx]}`;
     answersDiv.appendChild(label);
   });
 
@@ -1193,29 +1213,6 @@ quizData.forEach((item, index) => {
   quizContainer.appendChild(questionDiv);
 });
 
-// Xử lý khi chọn đáp án
-quizContainer.addEventListener('change', (e) => {
-  if (e.target.matches('input[type=radio]')) {
-    const name = e.target.name;
-    const index = parseInt(name.substring(1));
-    const selected = e.target.value;
-    const correctAnswer = quizData[index].correct;
-    const answers = document.querySelectorAll(`input[name=${name}]`);
-
-    answers.forEach(ans => {
-      const label = ans.parentElement;
-      label.classList.remove('correct', 'incorrect');
-
-      if (ans.value === correctAnswer) {
-        label.classList.add('correct');
-      } else if (ans.checked && ans.value !== correctAnswer) {
-        label.classList.add('incorrect');
-      }
-    });
-  }
-});
-
-// Xử lý khi bấm Nộp bài
 const submitBtn = document.getElementById('submit');
 const resultDiv = document.getElementById('result');
 
@@ -1226,8 +1223,19 @@ submitBtn.addEventListener('click', () => {
     const selector = `input[name=q${index}]:checked`;
     const selected = document.querySelector(selector);
 
-    if (selected && selected.value === item.correct) {
-      correct++;
+    const answers = document.querySelectorAll(`input[name=q${index}]`);
+    answers.forEach(ans => {
+      const label = ans.parentElement;
+      label.classList.remove('correct', 'incorrect');
+    });
+
+    if (selected) {
+      if (selected.value === item.correct) {
+        selected.parentElement.classList.add('correct');
+        correct++;
+      } else {
+        selected.parentElement.classList.add('incorrect');
+      }
     }
   });
 
