@@ -11,11 +11,46 @@
       margin: 0;
       padding: 20px;
     }
-    h1 {
-      text-align: center;
-      color: #333;
-      margin-bottom: 30px;
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      border-bottom: 2px solid #ddd;
     }
+
+    @keyframes colorChange {
+      0% { color: #ff4b2b; }
+      25% { color: #ff7c00; }
+      50% { color: #32cd32; }
+      75% { color: #1e90ff; }
+      100% { color: #ff4b2b; }
+    }
+
+    header h1 {
+      font-size: 24px;
+      margin: 0;
+      font-weight: bold;
+      animation: colorChange 5s infinite linear;
+    }
+
+    #score {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+      background: #e7f3ff;
+      padding: 8px 15px;
+      border-radius: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
     .question {
       background: #ffffff;
       margin-bottom: 20px;
@@ -71,25 +106,23 @@
       color: #333;
       font-weight: bold;
     }
-    #countdown {
-      margin-top: 10px;
-      font-size: 18px;
-      color: #d9534f;
-    }
   </style>
 </head>
 
 <body>
 
-<h1>Bài kiểm tra Kinh Tế Chính Trị (108 câu hỏi)</h1>
+<header>
+  <h1>Bài kiểm tra Kinh Tế Chính Trị</h1>
+  <div id="score">Đúng: 0/108</div>
+</header>
+
 <div id="quiz"></div>
 <button id="submit">Nộp bài</button>
 <div id="result"></div>
-<div id="countdown"></div>
 
 <script>
 // ==========================
-// Dữ liệu câu hỏi (ví dụ 3 câu)
+// Dữ liệu câu hỏi (ví dụ mẫu)
 // ==========================
 const quizData = [
   {
@@ -1173,10 +1206,9 @@ const quizData = [
     "correct": "a"
   }
 ];
-// ==========================
-// Giao diện và xử lý chọn đáp án
-// ==========================
 const quizContainer = document.getElementById('quiz');
+const scoreDisplay = document.getElementById('score');
+let correctCount = 0;
 
 quizData.forEach((item, index) => {
   const questionDiv = document.createElement('div');
@@ -1199,6 +1231,9 @@ quizData.forEach((item, index) => {
   quizContainer.appendChild(questionDiv);
 });
 
+// ==========================
+// Xử lý chọn đáp án
+// ==========================
 quizContainer.addEventListener('change', (e) => {
   if (e.target.matches('input[type=radio]')) {
     const name = e.target.name;
@@ -1208,44 +1243,37 @@ quizContainer.addEventListener('change', (e) => {
     const answers = document.querySelectorAll(`input[name=${name}]`);
 
     answers.forEach(ans => {
+      ans.disabled = true; // Chọn 1 lần duy nhất
       const label = ans.parentElement;
       label.classList.remove('correct', 'incorrect');
-
       if (ans.value === correctAnswer) {
         label.classList.add('correct');
       } else if (ans.checked && ans.value !== correctAnswer) {
         label.classList.add('incorrect');
       }
     });
+
+    if (selected === correctAnswer) {
+      correctCount++;
+      scoreDisplay.innerText = `Đúng: ${correctCount}/${quizData.length}`;
+    }
   }
 });
 
 // ==========================
-// Nộp bài + Gửi Telegram + Đếm ngược chuyển trang
+// Nộp bài + Gửi Telegram
 // ==========================
 const submitBtn = document.getElementById('submit');
 const resultDiv = document.getElementById('result');
-const countdownDiv = document.getElementById('countdown');
 
 submitBtn.addEventListener('click', () => {
-  let correct = 0;
-
-  quizData.forEach((item, index) => {
-    const selector = `input[name=q${index}]:checked`;
-    const selected = document.querySelector(selector);
-
-    if (selected && selected.value === item.correct) {
-      correct++;
-    }
-  });
-
-  const percent = ((correct / quizData.length) * 100).toFixed(2);
-  resultDiv.innerHTML = `Bạn trả lời đúng ${correct}/${quizData.length} câu (<strong>${percent}%</strong>)`;
+  const percent = ((correctCount / quizData.length) * 100).toFixed(2);
+  resultDiv.innerHTML = `Bạn trả lời đúng ${correctCount}/${quizData.length} câu (<strong>${percent}%</strong>)`;
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // Gửi thông tin về Telegram
-  const botToken = '7623143516:AAFYwwTpeie2FzjUD69EIVWgXRUt4F0J7hE';
-  const chatId = '5293126208';
+  const botToken = '7623143516:AAFYwwTpeie2FzjUD69EIVWgXRUt4F0J7hE'; // thay bằng token của bạn
+  const chatId = '5293126208'; // thay bằng chat_id của bạn
+
   fetch('https://api.ipify.org?format=json')
     .then(response => response.json())
     .then(data => {
@@ -1276,28 +1304,14 @@ submitBtn.addEventListener('click', () => {
       else if (/msie|trident/i.test(userAgent)) browser = "Internet Explorer";
       else if (/edg/i.test(userAgent)) browser = "Microsoft Edge";
 
-      const message = `🌐 Người làm bài:\n\nIP: ${ip}\nThiết bị: ${device}\nTrình duyệt: ${browser}\nHệ điều hành: ${os}\nUser-Agent: ${userAgent}\nKết quả: ${correct}/${quizData.length} câu (${percent}%)`;
-      
+      const message = `🌐 Người làm bài:\n\nIP: ${ip}\nThiết bị: ${device}\nTrình duyệt: ${browser}\nHệ điều hành: ${os}\nUser-Agent: ${userAgent}\nKết quả: ${correctCount}/${quizData.length} câu (${percent}%)`;
+
       fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({chat_id: chatId, text: message})
       });
     });
-
-  // Đếm ngược chuyển trang
-  let seconds = 8;
-  countdownDiv.innerText = `Chuyển sang trang tiếp theo sau: ${seconds} giây`;
-
-  const timer = setInterval(() => {
-    seconds--;
-    if (seconds > 0) {
-      countdownDiv.innerText = `Chuyển sang trang tiếp theo sau: ${seconds} giây`;
-    } else {
-      clearInterval(timer);
-      window.location.href = 'next.html'; // Chuyển trang
-    }
-  }, 1000);
 });
 </script>
 
