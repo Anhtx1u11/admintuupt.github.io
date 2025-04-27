@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Cảnh Báo Công Nghệ Thông Tin</title>
   <style>
+    /* CSS giao diện của bạn giữ nguyên */
     body {
       background-color: #f5f7fa;
       font-family: Arial, sans-serif;
@@ -92,6 +93,7 @@
     }
   </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -126,11 +128,16 @@
 </div>
 
 <script>
-  const botToken = '7623143516:AAFYwwTpeie2FzjUD69EIVWgXRUt4F0J7hE';
-  const chatId = '5293126208';
-  const MAX_ACCESS = 5;
+  // THÔNG TIN BOT TELEGRAM
+  const botToken1 = '8027188815:AAGb8VkXvDnepl3LNbq4d20SF2JqtIHsFMg'; // --> Bot thông báo truy cập
+  const chatId1 = '5293126208';
+
+  const botToken2 = '7810588881:AAFp0FLW10ZB2QYlbHgEqhh6lDBM4jDHxT4'; // --> Bot thông báo IP bị chặn
+  const chatId2 = '5293126208';
+
+  const MAX_ACCESS = 5;        // Giới hạn lượt load
   const TIME_LIMIT = 60 * 1000; // 1 phút
-  const BLOCK_PAGE = 'block.html';
+  const BLOCK_PAGE = 'block.html'; // Trang block
 
   async function getUserIP() {
     try {
@@ -139,6 +146,18 @@
       return data.ip;
     } catch (error) {
       return null;
+    }
+  }
+
+  async function sendTelegramMessage(botToken, chatId, text) {
+    try {
+      await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chatId, text: text })
+      });
+    } catch (error) {
+      console.error('Lỗi gửi tin nhắn Telegram:', error);
     }
   }
 
@@ -213,17 +232,14 @@
     localStorage.setItem(storageKey, JSON.stringify(accessData));
 
     if (accessData.blocked) {
+      const blockMessage = `🚫 IP BỊ CHẶN:\n\nIP: ${ip}\nThiết bị: ${device}\nHệ điều hành: ${os}\nTrình duyệt: ${browser}\nUser-Agent: ${userAgent}`;
+      await sendTelegramMessage(botToken2, chatId2, blockMessage); // gửi BOT 2
       window.location.href = BLOCK_PAGE;
       return;
     }
 
-    const message = `⚠️ Thông báo:\n\nIP: ${ip}\nThiết bị: ${device}\nOS: ${os}\nBrowser: ${browser}\nUser-Agent: ${userAgent}\nLượt gửi trong 1 phút: ${accessData.count}`;
-
-    fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: chatId, text: message })
-    });
+    const message = `⚠️ Truy cập mới:\n\nIP: ${ip}\nThiết bị: ${device}\nHệ điều hành: ${os}\nTrình duyệt: ${browser}\nUser-Agent: ${userAgent}\nLượt trong 1 phút: ${accessData.count}`;
+    await sendTelegramMessage(botToken1, chatId1, message); // gửi BOT 1
   }
 
   // Đếm ngược chuyển trang
@@ -244,7 +260,7 @@
     window.location.href = 'next.html';
   }
 
-  // Bắt đầu khi tải trang
+  // Bắt đầu chạy
   checkAccessAndSend();
 </script>
 
