@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Bài kiểm tra Kinh Tế Chính Trị (108 câu hỏi)</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+    }
+    .question {
+      background: #ffffff;
+      margin-bottom: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .question h3 {
+      margin-bottom: 15px;
+      color: #444;
+    }
+    .answers label {
+      display: block;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background: #fafafa;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .answers label:hover {
+      background: #e6f7ff;
+    }
+    .correct {
+      background-color: #d4edda !important;
+      border-color: #28a745 !important;
+    }
+    .incorrect {
+      background-color: #f8d7da !important;
+      border-color: #dc3545 !important;
+    }
+    #submit {
+      display: block;
+      margin: 30px auto;
+      padding: 15px 30px;
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+      background-color: #007bff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #submit:hover {
+      background-color: #0056b3;
+    }
+    #result {
+      text-align: center;
+      font-size: 24px;
+      margin-top: 30px;
+      color: #333;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Bài kiểm tra Kinh Tế Chính Trị (108 câu hỏi)</h1>
+<div id="quiz"></div>
+<button id="submit">Nộp bài</button>
+<div id="result"></div>
+
+<script>
+// ==========================
+// Dữ liệu câu hỏi (ví dụ)
+// ==========================
+const quizData = [
+  {
+    "question": "1/ Các xí nghiệp tư bản vẫn giữ độc lập về sản xuất, còn mọi việc mua, bán do một ban quản trị chung đảm nhận là hình thức tổ chức độc quyền nào?",
+    "options": [
+      "Trust",
+      "Cartel",
+      "Consortium",
+      "Syndicate"
+    ],
+    "correct": "d"
+  },
+  {
+    "question": "Các xí nghiệp tư bản lớn ký các hiệp ước thỏa thuận về giá cả, sản lượng tiêu thụ, thị trường tiêu thụ, kỳ hạn thanh toán... là hình thức tổ chức độc quyền nào?",
+    "options": [
+      "Syndicate",
+      "Cartel",
+      "Trust",
+      "Consortium"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Các công ty độc quyền sẽ kiểm soát yếu tố nào?",
+    "options": [
+      "Giá mua, giá bán",
+      "Lao động và vốn",
+      "Thị trường và công nghệ",
+      "Địa điểm sản xuất"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Một trong những nguyên nhân hình thành độc quyền nhà nước?",
+    "options": [
+      "Tích lũy tư bản nhỏ",
+      "Tích tụ và tập trung vốn lớn",
+      "Giảm đầu tư vào tư nhân",
+      "Tăng thu nhập người lao động"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Các xí nghiệp tư bản thống nhất cả việc sản xuất, tiêu thụ hàng hóa đều do một ban quản trị chung quản lý là hình thức tổ chức độc quyền nào?",
+    "options": [
+      "Cartel",
+      "Consortium",
+      "Trust",
+      "Syndicate"
+    ],
+    "correct": "c"
+  },
+  {
+    "question": "Lao động trừu tượng tạo ra hàng hóa có?",
+    "options": [
+      "Giá trị sử dụng",
+      "Giá trị",
+      "Lợi nhuận",
+      "Giá thành"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Tỷ suất giá trị thặng dư tỷ lệ nghịch với yếu tố nào?",
+    "options": [
+      "Tư liệu sản xuất",
+      "Cấu tạo hữu cơ của tư bản c/v",
+      "Giá trị thặng dư",
+      "Năng suất lao động"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Chọn ý đúng về tốc độ chu chuyển của tư bản?",
+    "options": [
+      "Tỷ lệ thuận với thời gian",
+      "Tốc độ chu chuyển tỉ lệ nghịch với thời gian 1 vòng chu chuyển",
+      "Không liên quan tới thời gian",
+      "Phụ thuộc vào vốn cố định"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Kinh tế thị trường định hướng XHCN là nền kinh tế vận hành theo các quy luật của thị trường có sự điều tiết của nhà nước và do ai lãnh đạo?",
+    "options": [
+      "Nhà nước",
+      "Quốc hội",
+      "Đảng cộng sản Việt Nam",
+      "Chính phủ"
+    ],
+    "correct": "c"
+  },
+  {
+    "question": "Chọn ý nói về giá trị của hàng hóa?",
+    "options": [
+      "Giá thành sản xuất",
+      "Hao phí lao động xã hội cần thiết là 100 ngàn đồng",
+      "Lợi nhuận thuần",
+      "Tư liệu tiêu dùng"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Chọn ý nói về công cuộc đổi mới?",
+    "options": [
+      "Thay đổi chính trị",
+      "Cải ghế có chỗ ngồi, thay đệm có ngồi",
+      "Cách mạng công nghiệp",
+      "Tăng cường quân sự"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Phát triển kinh tế thị trường định hướng XHCN sẽ dẫn đến không xảy ra điều gì dưới đây?",
+    "options": [
+      "Phân hóa giàu nghèo",
+      "Cạnh tranh gay gắt",
+      "Tăng cường bóc lột sức lao động",
+      "Hội nhập quốc tế"
+    ],
+    "correct": "c"
+  },
+  {
+    "question": "Ở nước Mỹ, thông qua nghị quyết làm việc 8h vào năm nào?",
+    "options": [
+      "1880",
+      "1884",
+      "1888",
+      "1890"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Ở nước Mỹ, hình thành ngày lễ quốc tế lao động vào năm nào?",
+    "options": [
+      "1884",
+      "1886",
+      "1888",
+      "1892"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Cuộc khủng hoảng kinh tế 1873 đã làm phá sản những xí nghiệp nào?",
+    "options": [
+      "Lớn",
+      "Quốc doanh",
+      "Vừa và nhỏ",
+      "Hợp tác xã"
+    ],
+    "correct": "c"
+  },
+  {
+    "question": "Xếp các hình thức tổ chức độc quyền từ bậc thấp đến cao?",
+    "options": [
+      "Cartel, syndicate, trust, consortium",
+      "Trust, cartel, syndicate, consortium",
+      "Consortium, trust, cartel, syndicate",
+      "Syndicate, cartel, consortium, trust"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Chọn ý đúng về tích tụ tư bản và tập trung tư bản?",
+    "options": [
+      "Cả hai đều từ bên ngoài",
+      "Cả hai đều từ nhà nước",
+      "Tích tụ tư bản từ tích lũy của từng nhà tư bản riêng rẽ",
+      "Tích tụ tư bản từ mua bán công ty"
+    ],
+    "correct": "c"
+  },
+  {
+    "question": "Tăng cường độ lao động giống như?",
+    "options": [
+      "Kéo dài thời gian lao động",
+      "Rút ngắn thời gian lao động",
+      "Giảm số lượng lao động",
+      "Tăng giá trị sản phẩm"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Giá trị sức lao động được đo gián tiếp bằng yếu tố nào?",
+    "options": [
+      "Thời gian lao động",
+      "Tư liệu sinh hoạt",
+      "Sản phẩm tiêu dùng",
+      "Mức tiền lương"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Đưa vào vai trò tạo ra giá trị thặng dư của tư bản thành 2 loại sau?",
+    "options": [
+      "Tư bản bất biến và tư bản khả biến",
+      "Vốn lưu động và vốn cố định",
+      "Nguyên liệu và máy móc",
+      "Sản phẩm và tiền lãi"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Bán hàng hóa cao hơn giá trị thị trường hợp nào đúng?",
+    "options": [
+      "p<m",
+      "p>m",
+      "p=m",
+      "p=0"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Bản chất của vàng so với tiền giấy là gì?",
+    "options": [
+      "Dễ hỏng",
+      "Giảm giá trị theo thời gian",
+      "Không mất giá/ không làm phát",
+      "Không dùng để tích trữ"
+    ],
+    "correct": "c"
+  },
+  {
+    "question": "Một trong những hạn chế của hình thái chung của giá trị là gì?",
+    "options": [
+      "Dễ quản lý",
+      "Giá trị ổn định",
+      "Khó bảo quản",
+      "Không thay đổi"
+    ],
+    "correct": "c"
+  },
+  {
+    "question": "Giảm suất lao động 2 lần và tăng cường độ lao động 2 lần thì trường hợp nào đúng?",
+    "options": [
+      "Tổng giá trị sản phẩm không đổi",
+      "Giá trị tổng sản phẩm tăng 2 lần",
+      "Giá trị sản phẩm giảm",
+      "Sản phẩm tiêu hao nhanh hơn"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Cường độ lao động tăng sẽ dẫn đến các trường hợp?",
+    "options": [
+      "Giá trị sản phẩm không đổi/ Giá trị tổng sản phẩm giảm",
+      "Giá trị sản phẩm không đổi/ Giá trị tổng sản phẩm tăng",
+      "Giá trị sản phẩm tăng/ Số lượng sản phẩm giảm",
+      "Giá trị tổng sản phẩm giảm/ Số lượng sản phẩm tăng"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Cường độ lao động giảm sẽ dẫn đến các trường hợp?",
+    "options": [
+      "Giá trị tổng sản phẩm tăng/ Số lượng sản phẩm giảm",
+      "Giá trị sản phẩm không đổi/ Giá trị tổng sản phẩm giảm",
+      "Giá trị sản phẩm giảm/ Số lượng sản phẩm tăng",
+      "Giá trị sản phẩm không đổi/ Số lượng sản phẩm tăng"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Giá trị tư bản bất biến bao gồm giá trị nào?",
+    "options": [
+      "C1 và C2",
+      "V1 và V2",
+      "H1 và H2",
+      "K1 và K2"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Ký hiệu của tư bản bất biến?",
+    "options": [
+      "C",
+      "V",
+      "M",
+      "H"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Ký hiệu của tư bản khả biến?",
+    "options": [
+      "C",
+      "V",
+      "M",
+      "H"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Ký hiệu của tư bản cố định?",
+    "options": [
+      "C1",
+      "C2",
+      "V",
+      "M"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Ký hiệu của tư bản lưu động?",
+    "options": [
+      "C2 + V",
+      "C1 + V",
+      "V + M",
+      "C1 + M"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Ký hiệu của tư bản ứng trước?",
+    "options": [
+      "K (lớn)",
+      "k (nhỏ)",
+      "V",
+      "H"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Ký hiệu của chi phí sản xuất?",
+    "options": [
+      "K (lớn)",
+      "k (nhỏ)",
+      "V",
+      "C"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "H bao gồm những gì?",
+    "options": [
+      "C+M",
+      "C+V+M",
+      "C+V",
+      "V+M"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "H’ bao gồm những gì?",
+    "options": [
+      "C+V+M",
+      "C+M",
+      "C+V",
+      "V+M"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Chọn ý đúng về H và H’?",
+    "options": [
+      "H luôn nhỏ hơn H’",
+      "H bằng H’",
+      "H lớn hơn H’",
+      "Không xác định"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Tư bản ứng trước là gì?",
+    "options": [
+      "Giá trị sản phẩm đầu tư",
+      "Giá trị tư liệu sản xuất",
+      "Là tổng số tiền ứng ban đầu hay còn gọi là vốn đầu tư",
+      "Lợi nhuận ban đầu"
+    ],
+    "correct": "c"
+  },
+  {
+    "question": "m’=100% ta có thể suy ra?",
+    "options": [
+      "m=v và t’=t",
+      "m=2v và t=3t",
+      "m=v và t’=2t",
+      "m=3v và t’=t"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "m’=200% ta có thể suy ra?",
+    "options": [
+      "m=2v và t’=2t",
+      "m=v và t’=t",
+      "m=3v và t’=t",
+      "m=2v và t’=3t"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "m’=300% ta có thể suy ra?",
+    "options": [
+      "m=3v và t’=3t",
+      "m=v và t’=t",
+      "m=2v và t’=2t",
+      "m=4v và t’=3t"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Hai thuộc tính của hàng hóa sức lao động là gì?",
+    "options": [
+      "Giá trị và giá trị sử dụng",
+      "Giá trị và lợi nhuận",
+      "Giá trị sử dụng và chi phí sản xuất",
+      "Giá trị trao đổi và chi phí"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Chọn ý đúng về tư bản ứng trước và chi phí sản xuất?",
+    "options": [
+      "Chi phí sản xuất là tính giá trị chuyển vào sản phẩm trong 1 năm",
+      "Chi phí sản xuất là toàn bộ vốn đầu tư",
+      "Chi phí sản xuất là lợi nhuận thu được",
+      "Chi phí sản xuất là chi phí quảng cáo"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Tư bản đầu tư gồm có?",
+    "options": [
+      "C và V",
+      "C và M",
+      "V và M",
+      "C, V và M"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Khi cung lớn hơn cầu sẽ dẫn đến điều gì?",
+    "options": [
+      "Giá cả lớn hơn giá trị sản phẩm",
+      "Giá cả nhỏ hơn giá trị sản phẩm",
+      "Giá cả bằng giá trị sản phẩm",
+      "Không ảnh hưởng"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Khi cung nhỏ hơn cầu sẽ dẫn đến điều gì?",
+    "options": [
+      "Giá cả bằng giá trị sản phẩm",
+      "Giá cả nhỏ hơn giá trị sản phẩm",
+      "Giá cả lớn hơn giá trị sản phẩm",
+      "Giá trị sản phẩm không thay đổi"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Độc quyền là gì?",
+    "options": [
+      "Là sự liên minh giữa các doanh nghiệp lớn/ Có khả năng thâu tóm việc sản xuất và tiêu thụ một số loại hàng hóa/ Có khả năng định ra giá cả độc quyền, nhằm thu lợi nhuận độc quyền cao.",
+      "Là sự liên kết của các cá nhân nhỏ lẻ",
+      "Là cạnh tranh tự do giữa các doanh nghiệp",
+      "Là giảm giá bán sản phẩm"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Sự hình thành các tổ chức độc quyền dựa trên cơ sở chủ yếu trực tiếp nào?",
+    "options": [
+      "Tích tụ, tập trung sản xuất và sự ra đời của các xí nghiệp quy mô lớn",
+      "Thương mại quốc tế",
+      "Quá trình phân phối hàng hóa",
+      "Hệ thống tài chính ngân hàng"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Tổ chức độc quyền nào có sự liên kết rộng và chặt chẽ nhất?",
+    "options": [
+      "Tờ-rớt",
+      "Cartel",
+      "Trust",
+      "Consortium"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Năm đặc điểm kinh tế cơ bản của độc quyền dưới chủ nghĩa tư bản:",
+    "options": [
+      "Nói lên bản chất thống trị của tư bản độc quyền/ Có quan hệ chặt chẽ với nhau/ Là phương thức thực hiện lợi ích của các tập đoàn độc quyền",
+      "Phân phối hàng hóa tự do",
+      "Hạn chế cạnh tranh",
+      "Cạnh tranh tự do phát triển"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Các tổ chức độc quyền thiết lập giá cả độc quyền để nhằm mục đích cuối cùng là gì?",
+    "options": [
+      "Thu lợi nhuận độc quyền cao",
+      "Mở rộng thị trường",
+      "Giảm giá thành sản phẩm",
+      "Tăng sức cạnh tranh"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Biểu hiện mới của tích tụ và tập trung tư bản trong chủ nghĩa tư bản ngày nay:",
+    "options": [
+      "Hình thành các tổ chức độc quyền lớn Concern và Conglomerate/ Sự phát triển của các xí nghiệp nhỏ và vừa/ Độc quyền xuất hiện cả ở những nước đang phát triển",
+      "Tăng cường đầu tư quốc tế",
+      "Giảm bớt cạnh tranh",
+      "Hạn chế sản xuất"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Đầu tư trực tiếp được thực hiện bằng cách:",
+    "options": [
+      "Xây dựng xí nghiệp ở nước ngoài để sản xuất kinh doanh để thu lợi nhuận",
+      "Mua bán cổ phiếu",
+      "Cho vay tín dụng",
+      "Góp vốn liên doanh"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Sự ra đời và phát triển của độc quyền ngân hàng thông qua quá trình nào sau đây:",
+    "options": [
+      "Các ngân hàng lớn có khuynh hướng liên minh",
+      "Cạnh tranh giữa các ngân hàng nhỏ",
+      "Nhà nước kiểm soát hoàn toàn ngân hàng",
+      "Phá sản các ngân hàng nhỏ"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Sự ra đời của tư bản tài chính là kết quả phát triển của:",
+    "options": [
+      "Quá trình độc quyền hóa trong công nghiệp và ngân hàng có quan hệ chặt chẽ với nhau",
+      "Tăng trưởng xuất khẩu",
+      "Phát triển thương mại tự do",
+      "Phân hóa lao động"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Vai trò của tư bản tài chính trong giai đoạn độc quyền là gì?",
+    "options": [
+      "Không chế hoạt động của nền kinh tế tư bản chủ nghĩa",
+      "Thúc đẩy phát triển kinh tế quốc dân",
+      "Đẩy mạnh sản xuất công nghiệp nhẹ",
+      "Giảm bớt chi phí sản xuất"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Xuất khẩu tư bản là đặc điểm của:",
+    "options": [
+      "Độc quyền trong chủ nghĩa tư bản",
+      "Chủ nghĩa xã hội",
+      "Chủ nghĩa trọng thương",
+      "Kinh tế tự do"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Mục đích chủ yếu nhất của xuất khẩu tư bản là gì?",
+    "options": [
+      "Chiếm đoạt giá trị thặng dư và các nguồn lợi khác ở nước nhập khẩu tư bản",
+      "Giúp đỡ các nước kém phát triển",
+      "Hỗ trợ các nước nghèo",
+      "Mở rộng giao thương quốc tế"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Tư bản tài chính là gì?",
+    "options": [
+      "Là tư bản do sự liên kết và tài chính giữa các nhà tư bản hợp thành",
+      "Là vốn nhà nước đầu tư",
+      "Là vốn tích lũy từ ngân hàng",
+      "Là nguồn vốn từ thuế"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Độc quyền nhà nước trong chủ nghĩa tư bản là sự thống nhất của:",
+    "options": [
+      "Tăng sức mạnh của các tổ chức độc quyền/ Tăng vai trò can thiệp của nhà nước vào kinh tế/ Kết hợp sức mạnh của các tổ chức độc quyền tư nhân và sức mạnh nhà nước trong một cơ chế thống nhất",
+      "Giảm vai trò nhà nước",
+      "Cạnh tranh thị trường tự do",
+      "Sự tách biệt hoàn toàn giữa nhà nước và tư nhân"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Sức lao động là:",
+    "options": [
+      "Toàn bộ thể lực và trí lực trong một con người đang sống và được vận dụng để sản xuất ra giá trị sử dụng nào đó",
+      "Sức khỏe con người",
+      "Năng lực sáng tạo",
+      "Khả năng học tập"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Lao động sản xuất có đặc trưng cơ bản là:",
+    "options": [
+      "Hoạt động cơ bản nhất, là phẩm chất đặc biệt của con người/ Là hoạt động có mục đích, có ý thức của con người/ Là sự tiêu dùng sức lao động trong hiện thực",
+      "Hoạt động tự phát",
+      "Hoạt động theo bản năng",
+      "Sáng tạo nghệ thuật"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Tái sản xuất là:",
+    "options": [
+      "Là quá trình sản xuất được lặp đi lặp lại và phục hồi không ngừng",
+      "Là quá trình tiêu dùng sản phẩm",
+      "Là quá trình sản xuất một lần",
+      "Là quá trình phân phối sản phẩm"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Căn cứ vào đâu để phân chia thành tái sản xuất cá biệt và tái sản xuất xã hội?",
+    "options": [
+      "Căn cứ vào lao động sản xuất",
+      "Căn cứ vào phạm vi sản xuất",
+      "Căn cứ vào phương tiện sản xuất",
+      "Căn cứ vào trình độ công nghệ"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Căn cứ vào đâu để chia ra thành tái sản xuất giản đơn và tái sản xuất mở rộng?",
+    "options": [
+      "Căn cứ vào nhu cầu tiêu dùng",
+      "Căn cứ vào quy mô",
+      "Căn cứ vào sản lượng sản phẩm",
+      "Căn cứ vào thời gian lao động"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Chủ nghĩa tư bản ra đời khi:",
+    "options": [
+      "Tư liệu sản xuất được cơ giới hóa",
+      "Tư liệu sản xuất phân phối rộng rãi",
+      "Tư liệu sản xuất tập trung vào một số ít người còn đa số người bị mất hết TLSX",
+      "Các công cụ sản xuất được cải tiến"
+    ],
+    "correct": "c"
+  },
+  {
+    "question": "Tư bản là:",
+    "options": [
+      "Sản phẩm thặng dư của xã hội",
+      "Giá trị mang lại giá trị thặng dư bằng cách bóc lột lao động làm thuê",
+      "Nguồn lực tài nguyên thiên nhiên",
+      "Lợi nhuận thương mại"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Chọn các ý đúng về lao động và sức lao động:",
+    "options": [
+      "Sức lao động chỉ là khả năng, còn lao động là sức lao động đã được tiêu dùng",
+      "Sức lao động là sản phẩm cuối cùng",
+      "Lao động không làm ra giá trị",
+      "Sức lao động có giá trị như hàng hóa"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Xã hội nào có phân công lao động xã hội nhưng chưa ra đời sản xuất hàng hóa?",
+    "options": [
+      "Xã hội chiếm hữu nô lệ",
+      "Thị tộc",
+      "Công xã nguyên thủy",
+      "Phong kiến"
+    ],
+    "correct": "c"
+  },
+  {
+    "question": "Điều kiện tất yếu để sức lao động trở thành hàng hóa là:",
+    "options": [
+      "Người lao động được tự do thân thể/ Người lao động hoàn toàn không có TLSX và của cải gì",
+      "Người lao động có sở hữu đất đai",
+      "Người lao động có công cụ sản xuất riêng",
+      "Người lao động làm chủ tư liệu sản xuất"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Tư bản cố định và tư bản lưu động thuộc phạm trù tư bản nào?",
+    "options": [
+      "Tư bản tài chính",
+      "Tư bản sản xuất",
+      "Tư bản thương mại",
+      "Tư bản lưu thông"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Tư bản cố định là:",
+    "options": [
+      "Giá trị chuyển hóa ngay vào sản phẩm",
+      "Giá trị sản phẩm tiêu dùng",
+      "Các TLSX chủ yếu như nhà xưởng, máy móc/ Giá trị của nó chuyển dần sang sản phẩm",
+      "Tài nguyên tự nhiên"
+    ],
+    "correct": "c"
+  },
+  {
+    "question": "Tư bản lưu động là:",
+    "options": [
+      "Sức lao động, nguyên vật liệu, nhiên liệu/ Tham gia từng phần vào sản xuất/ Giá trị của nó chuyển hết sang sản phẩm sau một chu kỳ sản xuất",
+      "Các máy móc thiết bị lớn",
+      "Nhà xưởng, đất đai",
+      "Các phương tiện giao thông"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Tư bản bất biến là:",
+    "options": [
+      "Sức lao động của công nhân làm thuê/ Là nguồn gốc của giá trị thặng dư",
+      "Tư bản tài chính",
+      "Nguyên liệu tiêu hao",
+      "Thuế sản xuất"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Các công thức tính tỷ suất giá trị thặng dư?",
+    "options": [
+      "(m/v) x 10%",
+      "(m+v)/v",
+      "m' = (m/v) x 100% hoặc m' = (Thời gian lao động thặng dư / Thời gian lao động cần thiết) x 100%",
+      "m' = (v/m) x 100%"
+    ],
+    "correct": "c"
+  },
+  {
+    "question": "Muốn tăng khối lượng giá trị thặng dư, nhà tư bản có thể sử dụng nhiều cách. Chọn ý đúng:",
+    "options": [
+      "Kéo dài thời gian lao động trong ngày khi thời gian lao động cần thiết không đổi/ Tăng cường độ lao động khi ngày lao động không đổi/ Giảm giá trị sức lao động khi ngày lao động không đổi",
+      "Giảm giá thành sản phẩm",
+      "Tăng số lượng lao động",
+      "Giảm thời gian lao động"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Tỷ suất giá trị thặng dư (m') phản ánh điều gì?",
+    "options": [
+      "Tăng năng suất lao động",
+      "Trình độ bóc lột của tư bản đối với công nhân làm thuê",
+      "Tăng lương tối thiểu",
+      "Khuyến khích sáng tạo lao động"
+    ],
+    "correct": "b"
+  },
+  {
+    "question": "Một trong những điều kiện ra đời của sản xuất hàng hóa?",
+    "options": [
+      "Sự tách biệt tương đối về mặt kinh tế của những người sản xuất/ Phân công lao động xã hội",
+      "Tập trung sản xuất quy mô lớn",
+      "Xuất hiện thị trường tiêu dùng",
+      "Xuất khẩu lao động"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Nếu nhà tư bản trả công theo đúng giá trị sức lao động thì có còn bóc lột giá trị thặng dư không?",
+    "options": [
+      "Có",
+      "Không",
+      "Có nhưng ít hơn",
+      "Không xác định"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Giá trị thặng dư là gì?",
+    "options": [
+      "Phần giá trị mới dôi ra ngoài giá trị sức lao động do người công nhân làm thuê tạo ra",
+      "Phần lợi nhuận kinh doanh",
+      "Phần vốn đầu tư ban đầu",
+      "Phần tài sản cố định"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Khuyết điểm của sản xuất tự cung tự cấp?",
+    "options": [
+      "Chưa đa dạng chất liệu",
+      "Thừa sản phẩm",
+      "Đáp ứng đủ mọi nhu cầu",
+      "Không cần lao động xã hội"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Chọn các ý đúng về tỷ suất lợi nhuận và tỷ suất giá trị thặng dư:",
+    "options": [
+      "p' < m'/ m' nói lên thực chất mức độ bóc lột/ p' chỉ ra nơi đầu tư có lợi cho nhà tư bản",
+      "p' > m'",
+      "p' bằng m'",
+      "p' chỉ phụ thuộc vào vốn lưu động"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Chọn các ý đúng về tư bản bất biến, tư bản khả biến, tư bản cố định, tư bản lưu động:",
+    "options": [
+      "Tư bản bất biến không thay đổi về lượng trong quá trình sản xuất/ Tư bản cố định là một bộ phận của tư bản bất biến/ Tư bản khả biến là một bộ phận của tư bản lưu động",
+      "Tư bản lưu động không thay đổi",
+      "Tư bản bất biến là chi phí lương",
+      "Tư bản khả biến không làm phát sinh giá trị"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Điều kiện ra đời của sản xuất hàng hóa?",
+    "options": [
+      "Có sự phân công lao động xã hội, có sự tách biệt về mặt kinh tế của các chủ thể sản xuất",
+      "Có đầy đủ tư liệu sản xuất",
+      "Lao động cá nhân",
+      "Xã hội cộng sản"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Sự tách biệt về mặt kinh tế giữa các chủ thể sản xuất dựa trên?",
+    "options": [
+      "Sự tách biệt về quyền sở hữu",
+      "Quyền sử dụng lao động",
+      "Quyền điều phối sản xuất",
+      "Quyền trao đổi"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Theo quan điểm của C.Mác, hàng hóa là?",
+    "options": [
+      "Sản phẩm của lao động, có thể thỏa mãn một nhu cầu nào đó của con người thông qua trao đổi và mua bán",
+      "Sản phẩm dùng để tích lũy",
+      "Sản phẩm chỉ để tiêu dùng",
+      "Sản phẩm sản xuất tự nhiên"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Theo C.Mác, giá trị của hàng hóa là?",
+    "options": [
+      "Lao động của người sản xuất ra hàng hóa kết tinh trong hàng hóa ấy",
+      "Giá thị trường",
+      "Giá thành sản xuất",
+      "Chi phí sản xuất"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "C.Mác cho rằng, sở dĩ các hàng hóa trao đổi được với nhau vì chúng có 1 điểm chung. Điểm chung đó là?",
+    "options": [
+      "Đều là kết quả của sự hao phí sức lao động",
+      "Đều là sản phẩm tiêu dùng",
+      "Đều do máy móc sản xuất",
+      "Đều có cùng giá trị"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Lao động hao phí để sản xuất ra hàng hóa mang tính?",
+    "options": [
+      "Xã hội",
+      "Cá nhân",
+      "Chủ quan",
+      "Bản năng"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Giá trị hàng hóa biểu hiện mối quan hệ kinh tế giữa những người sản xuất, trao đổi hàng hóa và là phạm trù có tính?",
+    "options": [
+      "Lịch sử",
+      "Bất biến",
+      "Vĩnh viễn",
+      "Tự nhiên"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Đơn vị đo lượng giá trị của hàng hóa?",
+    "options": [
+      "Thời gian lao động xã hội cần thiết",
+      "Số lượng sản phẩm",
+      "Tiền tệ",
+      "Sản phẩm sản xuất ra"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Thời gian lao động xã hội cần thiết là thời gian đổi hỏi để sản xuất ra một giá trị sử dụng nào đó trong những?",
+    "options": [
+      "Điều kiện bình thường của xã hội với trình độ thành thạo trung bình, cường độ lao động trung bình",
+      "Thời gian lao động cá nhân",
+      "Thời gian lao động riêng lẻ",
+      "Thời gian lao động thừa"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Xét về mặt cấu thành, lượng giá trị của một đơn vị hàng hóa được sản xuất ra bao gồm?",
+    "options": [
+      "Hao phí lao động quá khứ + hao phí lao động mới kết tinh thêm",
+      "Hao phí nguyên liệu",
+      "Hao phí chi phí vận chuyển",
+      "Hao phí bảo trì máy móc"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Các nhân tố ảnh hưởng đến lượng giá trị hàng hóa?",
+    "options": [
+      "Năng suất lao động, tính chất phức tạp hay giản đơn của lao động",
+      "Số lượng sản phẩm",
+      "Giá thị trường",
+      "Lợi nhuận thuần"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Năng suất lao động có mối quan hệ ... với lượng giá trị trong một đơn vị hàng hóa?",
+    "options": [
+      "Tỉ lệ nghịch",
+      "Tỉ lệ thuận",
+      "Không liên quan",
+      "Quan hệ đối xứng"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Theo C.Mác, các nhân tố tác động đến năng suất lao động gồm những yếu tố chủ yếu nào?",
+    "options": [
+      "Trình độ của người lao động, trình độ tiến tiến và mức độ trang thiết bị kỹ thuật, khoa học công nghệ trong quá trình sản xuất, cường độ lao động và yếu tố tự nhiên",
+      "Số lượng người lao động",
+      "Tốc độ sản xuất hàng hóa",
+      "Tăng ca lao động"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Tăng cường độ lao động thì?",
+    "options": [
+      "Tổng lượng giá trị tăng, tổng số sản phẩm tăng, lượng thời gian hao phí để sản xuất một đơn vị hàng hóa không thay đổi",
+      "Tổng lượng giá trị không thay đổi",
+      "Lượng sản phẩm giảm",
+      "Giá trị sản phẩm tăng gấp đôi"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Tính hai mặt của lao động sản xuất hàng hóa?",
+    "options": [
+      "Mặt cụ thể và mặt trừu tượng",
+      "Mặt vật chất và mặt tinh thần",
+      "Mặt xã hội và mặt tự nhiên",
+      "Mặt cá nhân và mặt tập thể"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Lao động cụ thể tạo ra?",
+    "options": [
+      "Giá trị sử dụng của hàng hóa",
+      "Giá trị trao đổi",
+      "Giá trị hàng hóa",
+      "Giá trị tài chính"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Lao động trừu tượng tạo ra?",
+    "options": [
+      "Giá trị của hàng hóa",
+      "Giá trị sử dụng",
+      "Giá trị trao đổi",
+      "Giá trị thặng dư"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Lao động cụ thể phản ánh?",
+    "options": [
+      "Tính chất tự nhiên",
+      "Tính xã hội",
+      "Tính lịch sử",
+      "Tính kinh tế"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Lao động trừu tượng phản ánh?",
+    "options": [
+      "Tính chất xã hội",
+      "Tính tự nhiên",
+      "Tính kỹ thuật",
+      "Tính cá nhân"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Mâu thuẫn giữa lao động cụ thể và lao động trừu tượng xuất hiện khi?",
+    "options": [
+      "Sản phẩm do những người sản xuất hàng hóa riêng biệt tạo ra không phù hợp với nhu cầu xã hội, hoặc khi mức tiêu hao lao động cá biệt cao hơn mức tiêu hao mà xã hội có thể chấp nhận được",
+      "Sản phẩm thiếu nguyên liệu",
+      "Lao động giảm hiệu quả",
+      "Sản phẩm thừa"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Mối quan hệ kinh tế cơt lõi của nền kinh tế hàng hóa là?",
+    "options": [
+      "Quan hệ kinh tế hàng hóa - tiền tệ",
+      "Quan hệ sản xuất tư liệu",
+      "Quan hệ chính trị - xã hội",
+      "Quan hệ phân phối"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Các hình thái giá trị từ thấp đến cao là?",
+    "options": [
+      "Hình thái giản đơn hay ngẫu nhiên, hình thái mở rộng, hình thái tiền",
+      "Hình thái ngẫu nhiên, hình thái giản đơn, hình thái tiền",
+      "Hình thái tiền, hình thái mở rộng, hình thái giản đơn",
+      "Hình thái mở rộng, hình thái tiền, hình thái giản đơn"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Tiền, về bản chất là?",
+    "options": [
+      "Một loại hàng hóa đặc biệt, là kết quả của quá trình phát triển của sản xuất và trao đổi hàng hóa, là yếu tố ngang giá chung, phản ánh lao động xã hội và mối quan hệ giữa những người sản xuất và trao đổi hàng hóa",
+      "Một loại tài sản đầu tư",
+      "Một công cụ lưu thông",
+      "Một dạng của vàng"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Giá cả hàng hóa lên xuống xoay quanh?",
+    "options": [
+      "Giá trị của nó",
+      "Chi phí sản xuất",
+      "Giá thành",
+      "Nhu cầu tiêu dùng"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "C.Mác cho rằng, giá cả hàng hóa chịu ảnh hưởng của nhiều nhân tố như?",
+    "options": [
+      "Giá trị hàng hóa, mức độ khan hiếm, quan hệ cung cầu, giá trị đồng tiền",
+      "Giá vốn đầu tư",
+      "Mức độ quảng cáo",
+      "Tình trạng thất nghiệp"
+    ],
+    "correct": "a"
+  },
+  {
+    "question": "Chức năng của tiền?",
+    "options": [
+      "Thước đo giá trị, phương tiện lưu thông, phương tiện cất trữ, phương tiện thanh toán, tiền tệ thế giới",
+      "Phương tiện chi tiêu cá nhân",
+      "Công cụ đầu tư tài chính",
+      "Phương tiện sản xuất"
+    ],
+    "correct": "a"
+  }
+];
+
+// ==========================
+// Giao diện và xử lý
+// ==========================
+const quizContainer = document.getElementById('quiz');
+
+// Tạo giao diện câu hỏi
+quizData.forEach((item, index) => {
+  const questionDiv = document.createElement('div');
+  questionDiv.classList.add('question');
+
+  const q = document.createElement('h3');
+  q.innerText = `${index + 1}. ${item.question}`;
+  questionDiv.appendChild(q);
+
+  const answersDiv = document.createElement('div');
+  answersDiv.classList.add('answers');
+
+  ['a', 'b', 'c', 'd'].forEach((letter, idx) => {
+    const label = document.createElement('label');
+    label.innerHTML = `<input type="radio" name="q${index}" value="${letter}"> ${item.options[idx] || ''}`;
+    answersDiv.appendChild(label);
+  });
+
+  questionDiv.appendChild(answersDiv);
+  quizContainer.appendChild(questionDiv);
+});
+
+// Xử lý khi chọn đáp án
+quizContainer.addEventListener('change', (e) => {
+  if (e.target.matches('input[type=radio]')) {
+    const name = e.target.name;
+    const index = parseInt(name.substring(1));
+    const selected = e.target.value;
+    const correctAnswer = quizData[index].correct;
+    const answers = document.querySelectorAll(`input[name=${name}]`);
+
+    answers.forEach(ans => {
+      const label = ans.parentElement;
+      label.classList.remove('correct', 'incorrect');
+
+      if (ans.value === correctAnswer) {
+        label.classList.add('correct');
+      } else if (ans.checked && ans.value !== correctAnswer) {
+        label.classList.add('incorrect');
+      }
+    });
+  }
+});
+
+// Xử lý khi bấm Nộp bài
+const submitBtn = document.getElementById('submit');
+const resultDiv = document.getElementById('result');
+
+submitBtn.addEventListener('click', () => {
+  let correct = 0;
+
+  quizData.forEach((item, index) => {
+    const selector = `input[name=q${index}]:checked`;
+    const selected = document.querySelector(selector);
+
+    if (selected && selected.value === item.correct) {
+      correct++;
+    }
+  });
+
+  const percent = ((correct / quizData.length) * 100).toFixed(2);
+  resultDiv.innerHTML = `Bạn trả lời đúng ${correct}/${quizData.length} câu (<strong>${percent}%</strong>)`;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+</script>
+
+</body>
+</html>
