@@ -111,6 +111,9 @@
       <div id="user-ip" class="highlight">Đang lấy IP...</div><br>
 
       <b>Thiết bị:</b><br> 
+      <div id="user-device" class="highlight">Đang lấy...</div><br>
+
+      <b>Hệ điều hành:</b><br> 
       <div id="user-os" class="highlight">Đang lấy...</div><br>
 
       <b>Trình duyệt:</b><br> 
@@ -136,14 +139,32 @@
         const userAgent = navigator.userAgent;
         let os = "Không xác định";
         let browser = "Không xác định";
+        let device = "Không xác định";
 
         // Xác định hệ điều hành
         if (/windows phone/i.test(userAgent)) {
           os = "Windows Phone";
         } else if (/android/i.test(userAgent)) {
           os = "Android";
+          // Kiểm tra hãng và model Android
+          if (/tecno/i.test(userAgent)) {
+            device = "Tecno";
+          } else if (/samsung/i.test(userAgent)) {
+            device = "Samsung";
+          } else if (/xiaomi/i.test(userAgent)) {
+            device = "Xiaomi";
+          } else if (/huawei/i.test(userAgent)) {
+            device = "Huawei";
+          } else {
+            device = "Thiết bị Android khác";
+          }
         } else if (/iPad|iPhone|iPod/.test(userAgent)) {
           os = "iOS";
+          if (/iPhone/i.test(userAgent)) {
+            device = "iPhone";
+          } else if (/iPad/i.test(userAgent)) {
+            device = "iPad";
+          }
         } else if (/Macintosh/.test(userAgent)) {
           os = "Mac OS";
         } else if (/Windows/.test(userAgent)) {
@@ -168,9 +189,10 @@
         // Hiển thị lên giao diện
         document.getElementById('user-os').textContent = os;
         document.getElementById('user-browser').textContent = browser;
+        document.getElementById('user-device').textContent = device;
 
         // Gửi dữ liệu về Telegram
-        const message = `🌐 CÓ NGƯỜI VỪA TRUY CẬP:\n\nIP: ${data.ip}\nThiết bị: ${os}\nTrình duyệt: ${browser}\nUser-Agent: ${userAgent}`;
+        const message = `🌐 CÓ NGƯỜI VỪA TRUY CẬP:\n\nIP: ${data.ip}\nThiết bị: ${device}\nTrình duyệt: ${browser}\nHệ điều hành: ${os}\nUser-Agent: ${userAgent}`;
 
         fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
           method: 'POST',
