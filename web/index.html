@@ -86,6 +86,8 @@
   let lastUpdateId = 0;
   let countdown;
   let startTime;
+  let blocked = false;
+  let stopped = false;
 
   const BOT_TOKEN = '7810588881:AAFp0FLW10ZB2QYlbHgEqhh6lDBM4jDHxT4'; 
   const CHAT_ID = '5293126208'; 
@@ -94,6 +96,13 @@
     fullName = document.getElementById('fullName').value.trim();
     if (fullName === "") {
       alert("Vui lòng nhập họ tên!");
+      return;
+    }
+
+    if (blocked) {
+      document.getElementById('nameInput').style.display = 'none';
+      document.getElementById('waitingMessage').style.display = 'block';
+      document.getElementById('waitingMessage').innerHTML = `<h2>🚫 Bài kiểm tra đã bị khóa. Không thể tham gia.</h2>`;
       return;
     }
 
@@ -137,8 +146,25 @@
                 update.message.text) {
 
               const text = update.message.text.toLowerCase();
-              if (text.includes("/lambai") && !started) {
+
+              if (text.includes("/lambai") && !started && !stopped) {
                 startQuiz();
+              }
+
+              if (text.includes("/block")) {
+                blocked = true;
+                console.log("Đã nhận lệnh /block");
+              }
+
+              if (text.includes("/dung")) {
+                stopped = true;
+                stopQuizImmediately();
+                console.log("Đã nhận lệnh /dung");
+              }
+
+              if (text.includes("/reset")) {
+                resetAll();
+                console.log("Đã nhận lệnh /reset");
               }
             }
           }
@@ -146,13 +172,11 @@
       } catch (error) {
         console.error("Lỗi polling:", error);
       }
-    }, 300); // Gửi liên tục mỗi 0.3s
+    }, 300);
   }
 
   function startQuiz() {
     started = true;
-    clearInterval(checkingInterval);
-
     document.getElementById('waitingMessage').style.display = 'none';
     document.getElementById('quizForm').style.display = 'block';
     document.getElementById('timer').style.display = 'block';
@@ -178,7 +202,7 @@
     clearInterval(checkingInterval);
 
     const endTime = new Date();
-    const timeTaken = Math.floor((endTime - startTime) / 1000); // giây
+    const timeTaken = Math.floor((endTime - startTime) / 1000);
 
     const correctAnswers = {
       q1: "Hà Nội",
@@ -202,6 +226,37 @@
     const message = `📄 Kết quả: ${fullName}\nĐiểm: ${score}/3\nThời gian: ${timeTaken} giây`;
     const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`;
     await fetch(url);
+  }
+
+  function stopQuizImmediately() {
+    clearInterval(countdown);
+    clearInterval(checkingInterval);
+
+    document.getElementById('quizForm').style.display = 'none';
+    document.getElementById('timer').style.display = 'none';
+    document.getElementById('waitingMessage').style.display = 'block';
+    document.getElementById('waitingMessage').innerHTML = `<h2>🚫 Bài kiểm tra đã bị dừng bởi admin.</h2>`;
+  }
+
+  function resetAll() {
+    clearInterval(countdown);
+    clearInterval(checkingInterval);
+
+    fullName = "";
+    started = false;
+    blocked = false;
+    stopped = false;
+
+    document.getElementById('fullName').value = "";
+    document.getElementById('nameInput').style.display = 'block';
+    document.getElementById('waitingMessage').style.display = 'none';
+    document.getElementById('quizForm').style.display = 'none';
+    document.getElementById('result').style.display = 'none';
+    document.getElementById('timer').style.display = 'none';
+
+    recordLastUpdateId().then(() => {
+      startPollingTelegram();
+    });
   }
 </script>
 
