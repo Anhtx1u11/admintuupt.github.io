@@ -2,8 +2,8 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kiểm tra nhóm 1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>✈️ Kiểm Tra Nhóm 1</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,7 +13,7 @@
       padding: 20px;
     }
     .container {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255,255,255,0.95);
       padding: 20px;
       max-width: 700px;
       margin: auto;
@@ -37,19 +37,27 @@
       margin-top: 20px;
       padding: 10px 20px;
       font-size: 16px;
+      cursor: pointer;
+    }
+    input[type="text"] {
+      padding: 8px;
+      width: 80%;
+      margin-top: 10px;
     }
   </style>
 </head>
+
 <body>
 
 <div class="container">
-  <div id="timer" style="display: none;">⏳ Thời gian còn lại: 60 giây</div>
+  <div id="timer" style="display:none;">⏳ Thời gian còn lại: 60 giây</div>
 
-  <h1>✈️ Trả Lời Vui Nhận Quà</h1>
+  <h1>✈️ Kiểm Tra Nhóm 1</h1>
 
   <div id="nameInput">
     <h2>Nhập họ và tên để bắt đầu</h2>
     <input type="text" id="fullName" placeholder="Nhập họ tên..." required>
+    <br>
     <button onclick="submitName()">Gửi tên</button>
   </div>
 
@@ -80,184 +88,170 @@
 </div>
 
 <script>
-  let fullName = "";
-  let checkingInterval;
-  let started = false;
-  let lastUpdateId = 0;
-  let countdown;
-  let startTime;
-  let blocked = false;
-  let stopped = false;
+// Cài đặt BOT
+const BOT_TOKEN = '8027188815:AAGb8VkXvDnepl3LNbq4d20SF2JqtIHsFMg'; // <-- Thay bằng token bot của bạn
+const CHAT_ID = '5293126208'; // <-- Thay bằng chat ID của bạn
 
-  const BOT_TOKEN = '7810588881:AAFp0FLW10ZB2QYlbHgEqhh6lDBM4jDHxT4'; 
-  const CHAT_ID = '5293126208'; 
+// Biến toàn cục
+let fullName = "";
+let lastUpdateId = 0;
+let started = false;
+let blocked = false;
+let stopped = false;
+let baiMo = false;
+let countdown;
+let startTime;
 
-  async function submitName() {
-    fullName = document.getElementById('fullName').value.trim();
-    if (fullName === "") {
-      alert("Vui lòng nhập họ tên!");
-      return;
-    }
-
-    if (blocked) {
-      document.getElementById('nameInput').style.display = 'none';
-      document.getElementById('waitingMessage').style.display = 'block';
-      document.getElementById('waitingMessage').innerHTML = `<h2>🚫 Bài kiểm tra đã bị khóa. Không thể tham gia.</h2>`;
-      return;
-    }
-
-    document.getElementById('nameInput').style.display = 'none';
-    document.getElementById('waitingMessage').style.display = 'block';
-    document.getElementById('waitingMessage').innerHTML = `<h2>⏳ ${fullName} đang chờ admin kích hoạt...</h2>`;
-
-    await notifyAdmin(fullName);
-    await recordLastUpdateId();
-    startPollingTelegram();
+// Hàm gửi tên lên admin
+async function submitName() {
+  fullName = document.getElementById('fullName').value.trim();
+  if (!fullName) {
+    alert("Vui lòng nhập họ tên!");
+    return;
   }
-
-  async function notifyAdmin(name) {
-    const message = `📢 Thí sinh ${name} đang chờ thi!`;
-    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`;
-    await fetch(url);
+  if (blocked) {
+    showBlocked();
+    return;
   }
+  document.getElementById('nameInput').style.display = 'none';
+  document.getElementById('waitingMessage').style.display = 'block';
+  document.getElementById('waitingMessage').innerHTML = `<h2>⏳ ${fullName} đang chờ admin kích hoạt...</h2>`;
 
-  async function recordLastUpdateId() {
+  await notifyAdmin(fullName);
+  await getLastUpdateId();
+  listenTelegram();
+}
+
+// Hàm gửi thông báo lên telegram
+async function notifyAdmin(name) {
+  const text = `📢 Thí sinh ${name} đang chờ thi!`;
+  await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}`);
+}
+
+// Lấy lastUpdateId hiện tại
+async function getLastUpdateId() {
+  try {
     const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates`);
     const data = await res.json();
     const updates = data.result || [];
     if (updates.length > 0) {
       lastUpdateId = updates[updates.length - 1].update_id;
     }
+  } catch (e) {
+    console.error("Lỗi lấy lastUpdateId:", e);
   }
+}
 
-  function startPollingTelegram() {
-    checkingInterval = setInterval(async () => {
-      try {
-        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=${lastUpdateId + 1}`);
-        const data = await res.json();
-        const updates = data.result || [];
+// Nghe lệnh liên tục
+async function listenTelegram() {
+  while (true) {
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=${lastUpdateId + 1}&timeout=30`);
+      const data = await res.json();
+      const updates = data.result || [];
 
-        if (updates.length > 0) {
-          for (const update of updates) {
-            lastUpdateId = update.update_id;
-
-            if (update.message &&
-                update.message.chat.id == CHAT_ID &&
-                update.message.text) {
-
-              const text = update.message.text.toLowerCase();
-
-              if (text.includes("/lambai") && !started && !stopped) {
-                startQuiz();
-              }
-
-              if (text.includes("/block")) {
-                blocked = true;
-                console.log("Đã nhận lệnh /block");
-              }
-
-              if (text.includes("/dung")) {
-                stopped = true;
-                stopQuizImmediately();
-                console.log("Đã nhận lệnh /dung");
-              }
-
-              if (text.includes("/reset")) {
-                resetAll();
-                console.log("Đã nhận lệnh /reset");
-              }
-            }
+      for (const update of updates) {
+        lastUpdateId = update.update_id;
+        if (update.message && update.message.chat.id == CHAT_ID) {
+          const text = update.message.text.toLowerCase();
+          if (text.includes("/lambai")) {
+            baiMo = true;
+          }
+          if (text.includes("/block")) {
+            blocked = true;
+          }
+          if (text.includes("/dung")) {
+            stopped = true;
+          }
+          if (text.includes("/reset")) {
+            location.reload();
           }
         }
-      } catch (error) {
-        console.error("Lỗi polling:", error);
       }
-    }, 2000);
-  }
 
-  function startQuiz() {
-    started = true;
-    document.getElementById('waitingMessage').style.display = 'none';
-    document.getElementById('quizForm').style.display = 'block';
-    document.getElementById('timer').style.display = 'block';
-    startTimer(60);
-    startTime = new Date();
-  }
-
-  function startTimer(seconds) {
-    const timerElement = document.getElementById('timer');
-    timerElement.innerText = `⏳ Thời gian còn lại: ${seconds} giây`;
-    countdown = setInterval(() => {
-      seconds--;
-      timerElement.innerText = `⏳ Thời gian còn lại: ${seconds} giây`;
-      if (seconds <= 0) {
-        clearInterval(countdown);
-        submitQuiz();
+      if (baiMo && !started && !stopped) {
+        startQuiz();
       }
-    }, 1000);
-  }
 
-  async function submitQuiz() {
-    clearInterval(countdown);
-    clearInterval(checkingInterval);
-
-    const endTime = new Date();
-    const timeTaken = Math.floor((endTime - startTime) / 1000);
-
-    const correctAnswers = {
-      q1: "Hà Nội",
-      q2: "12",
-      q3: "Xanh"
-    };
-
-    let score = 0;
-    for (let key in correctAnswers) {
-      const selected = document.querySelector(`input[name="${key}"]:checked`);
-      if (selected && selected.value === correctAnswers[key]) {
-        score++;
+      if (blocked && !started && !stopped) {
+        showBlocked();
       }
+
+      if (stopped && started) {
+        stopQuiz();
+      }
+
+    } catch (error) {
+      console.error("Lỗi khi polling:", error);
+      await sleep(3000);
     }
+  }
+}
 
-    document.getElementById('quizForm').style.display = 'none';
-    document.getElementById('timer').style.display = 'none';
-    document.getElementById('result').style.display = 'block';
-    document.getElementById('result').innerText = `✅ ${fullName}\nĐiểm: ${score}/3\nThời gian: ${timeTaken} giây`;
+// Các hàm điều khiển giao diện
+function showBlocked() {
+  document.getElementById('nameInput').style.display = 'none';
+  document.getElementById('waitingMessage').style.display = 'block';
+  document.getElementById('waitingMessage').innerHTML = `<h2>🚫 Bài kiểm tra đã bị khóa. Không thể tham gia.</h2>`;
+}
 
-    const message = `📄 Kết quả: ${fullName}\nĐiểm: ${score}/3\nThời gian: ${timeTaken} giây`;
-    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`;
-    await fetch(url);
+function startQuiz() {
+  started = true;
+  document.getElementById('waitingMessage').style.display = 'none';
+  document.getElementById('quizForm').style.display = 'block';
+  document.getElementById('timer').style.display = 'block';
+  startTimer(60);
+  startTime = new Date();
+}
+
+function startTimer(seconds) {
+  const timer = document.getElementById('timer');
+  timer.innerText = `⏳ Thời gian còn lại: ${seconds} giây`;
+  countdown = setInterval(() => {
+    seconds--;
+    timer.innerText = `⏳ Thời gian còn lại: ${seconds} giây`;
+    if (seconds <= 0) {
+      clearInterval(countdown);
+      submitQuiz();
+    }
+  }, 1000);
+}
+
+async function submitQuiz() {
+  clearInterval(countdown);
+  const endTime = new Date();
+  const timeTaken = Math.floor((endTime - startTime) / 1000);
+
+  const correctAnswers = { q1: "Hà Nội", q2: "12", q3: "Xanh" };
+  let score = 0;
+
+  for (const key in correctAnswers) {
+    const selected = document.querySelector(`input[name="${key}"]:checked`);
+    if (selected && selected.value === correctAnswers[key]) {
+      score++;
+    }
   }
 
-  function stopQuizImmediately() {
-    clearInterval(countdown);
-    clearInterval(checkingInterval);
+  document.getElementById('quizForm').style.display = 'none';
+  document.getElementById('timer').style.display = 'none';
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('result').innerText = `✅ ${fullName}\nĐiểm: ${score}/3\nThời gian: ${timeTaken} giây`;
 
-    document.getElementById('quizForm').style.display = 'none';
-    document.getElementById('timer').style.display = 'none';
-    document.getElementById('waitingMessage').style.display = 'block';
-    document.getElementById('waitingMessage').innerHTML = `<h2>🚫 Bài kiểm tra đã bị dừng bởi admin.</h2>`;
-  }
+  const text = `📄 Kết quả: ${fullName}\nĐiểm: ${score}/3\nThời gian: ${timeTaken} giây`;
+  await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}`);
+}
 
-  function resetAll() {
-    clearInterval(countdown);
-    clearInterval(checkingInterval);
+function stopQuiz() {
+  clearInterval(countdown);
+  document.getElementById('quizForm').style.display = 'none';
+  document.getElementById('timer').style.display = 'none';
+  document.getElementById('waitingMessage').style.display = 'block';
+  document.getElementById('waitingMessage').innerHTML = `<h2>🚫 Bài kiểm tra đã bị dừng bởi admin.</h2>`;
+}
 
-    fullName = "";
-    started = false;
-    blocked = false;
-    stopped = false;
-
-    document.getElementById('fullName').value = "";
-    document.getElementById('nameInput').style.display = 'block';
-    document.getElementById('waitingMessage').style.display = 'none';
-    document.getElementById('quizForm').style.display = 'none';
-    document.getElementById('result').style.display = 'none';
-    document.getElementById('timer').style.display = 'none';
-
-    recordLastUpdateId().then(() => {
-      startPollingTelegram();
-    });
-  }
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 </script>
 
 </body>
