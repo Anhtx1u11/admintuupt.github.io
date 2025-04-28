@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kiểm tra nhóm 1</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1740&q=80') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      position: relative;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    #timer {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 18px;
+      color: #e74c3c;
+      font-weight: bold;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div id="timer" style="display: none;">⏳ Thời gian còn lại: 60 giây</div>
+
+  <h1>✈️ Kiểm tra nhóm 1</h1>
+
+  <div id="nameInput">
+    <h2>Nhập họ và tên để bắt đầu</h2>
+    <input type="text" id="fullName" placeholder="Nhập họ tên..." required>
+    <button onclick="submitName()">Gửi tên</button>
+  </div>
+
+  <div id="waitingMessage" style="display:none;"></div>
+
+  <form id="quizForm" style="display:none;">
+    <h2>Câu hỏi trắc nghiệm</h2>
+
+    <p>1. Thủ đô của Việt Nam là?</p>
+    <input type="radio" name="q1" value="Hà Nội"> Hà Nội<br>
+    <input type="radio" name="q1" value="Hồ Chí Minh"> Hồ Chí Minh<br>
+    <input type="radio" name="q1" value="Đà Nẵng"> Đà Nẵng<br>
+
+    <p>2. 5 + 7 = ?</p>
+    <input type="radio" name="q2" value="10"> 10<br>
+    <input type="radio" name="q2" value="12"> 12<br>
+    <input type="radio" name="q2" value="14"> 14<br>
+
+    <p>3. Màu của bầu trời thường là?</p>
+    <input type="radio" name="q3" value="Xanh"> Xanh<br>
+    <input type="radio" name="q3" value="Đỏ"> Đỏ<br>
+    <input type="radio" name="q3" value="Vàng"> Vàng<br>
+
+    <button type="button" onclick="submitQuiz()">Nộp bài</button>
+  </form>
+
+  <div id="result" style="display:none;"></div>
+</div>
+
+<script>
+  let fullName = "";
+  let checkingInterval;
+  let started = false;
+  let lastUpdateId = 0;
+  let countdown;
+  let startTime;
+
+  const BOT_TOKEN = '7810588881:AAFp0FLW10ZB2QYlbHgEqhh6lDBM4jDHxT4'; 
+  const CHAT_ID = '5293126208'; 
+
+  async function submitName() {
+    fullName = document.getElementById('fullName').value.trim();
+    if (fullName === "") {
+      alert("Vui lòng nhập họ tên!");
+      return;
+    }
+
+    document.getElementById('nameInput').style.display = 'none';
+    document.getElementById('waitingMessage').style.display = 'block';
+    document.getElementById('waitingMessage').innerHTML = `<h2>⏳ ${fullName} đang chờ admin kích hoạt...</h2>`;
+
+    await notifyAdmin(fullName);
+    await recordLastUpdateId();
+    startPollingTelegram();
+  }
+
+  async function notifyAdmin(name) {
+    const message = `📢 Thí sinh ${name} đang chờ thi!`;
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`;
+    await fetch(url);
+  }
+
+  async function recordLastUpdateId() {
+    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates`);
+    const data = await res.json();
+    const updates = data.result || [];
+    if (updates.length > 0) {
+      lastUpdateId = updates[updates.length - 1].update_id;
+    }
+  }
+
+  function startPollingTelegram() {
+    checkingInterval = setInterval(async () => {
+      try {
+        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=${lastUpdateId + 1}`);
+        const data = await res.json();
+        const updates = data.result || [];
+
+        if (updates.length > 0) {
+          for (const update of updates) {
+            lastUpdateId = update.update_id;
+
+            if (update.message &&
+                update.message.chat.id == CHAT_ID &&
+                update.message.text) {
+
+              const text = update.message.text.toLowerCase();
+              if (text.includes("/lambai") && !started) {
+                startQuiz();
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Lỗi polling:", error);
+      }
+    }, 300); // Gửi liên tục mỗi 0.3s
+  }
+
+  function startQuiz() {
+    started = true;
+    clearInterval(checkingInterval);
+
+    document.getElementById('waitingMessage').style.display = 'none';
+    document.getElementById('quizForm').style.display = 'block';
+    document.getElementById('timer').style.display = 'block';
+    startTimer(60);
+    startTime = new Date();
+  }
+
+  function startTimer(seconds) {
+    const timerElement = document.getElementById('timer');
+    timerElement.innerText = `⏳ Thời gian còn lại: ${seconds} giây`;
+    countdown = setInterval(() => {
+      seconds--;
+      timerElement.innerText = `⏳ Thời gian còn lại: ${seconds} giây`;
+      if (seconds <= 0) {
+        clearInterval(countdown);
+        submitQuiz();
+      }
+    }, 1000);
+  }
+
+  async function submitQuiz() {
+    clearInterval(countdown);
+    clearInterval(checkingInterval);
+
+    const endTime = new Date();
+    const timeTaken = Math.floor((endTime - startTime) / 1000); // giây
+
+    const correctAnswers = {
+      q1: "Hà Nội",
+      q2: "12",
+      q3: "Xanh"
+    };
+
+    let score = 0;
+    for (let key in correctAnswers) {
+      const selected = document.querySelector(`input[name="${key}"]:checked`);
+      if (selected && selected.value === correctAnswers[key]) {
+        score++;
+      }
+    }
+
+    document.getElementById('quizForm').style.display = 'none';
+    document.getElementById('timer').style.display = 'none';
+    document.getElementById('result').style.display = 'block';
+    document.getElementById('result').innerText = `✅ ${fullName}\nĐiểm: ${score}/3\nThời gian: ${timeTaken} giây`;
+
+    const message = `📄 Kết quả: ${fullName}\nĐiểm: ${score}/3\nThời gian: ${timeTaken} giây`;
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`;
+    await fetch(url);
+  }
+</script>
+
+</body>
+</html>
