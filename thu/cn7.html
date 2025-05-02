@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Trắc nghiệm ôn thi lớp 7</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #e1bee7);
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #4a148c;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin: 5px 0;
+      cursor: pointer;
+    }
+
+    .correct-answer {
+      color: green;
+      font-weight: bold;
+    }
+
+    .wrong-answer {
+      color: red;
+      font-weight: bold;
+    }
+
+    button {
+      background-color: #7b1fa2;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      display: block;
+      margin: 20px auto;
+    }
+
+    button:hover {
+      background-color: #6a1b9a;
+    }
+
+    .result {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f3e5f5;
+      border-radius: 10px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    hr {
+      border: 0;
+      height: 1px;
+      background: #ccc;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nhập tên trước -->
+  <div class="card">
+    <label for="studentName"><strong>Họ và tên:</strong></label>
+    <input type="text" id="studentName" placeholder="Nhập họ và tên của bạn">
+    <button onclick="startQuiz()">📝 Bắt đầu làm bài</button>
+  </div>
+
+  <!-- Phần câu hỏi ẩn lúc đầu -->
+  <div id="quizSection" style="display: none;">
+    <h1>🔍 Trắc nghiệm Ôn tập lớp 7</h1>
+    <form id="quizForm"></form>
+    <button onclick="submitQuiz()">📨 Nộp bài</button>
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    const TELEGRAM_BOT_TOKEN = '7393833255:AAEHbjSRIky-AFJNFCXqfdfMv7UHWla_T3s'; // <-- Thay bằng token bot của bạn
+    const TELEGRAM_CHAT_ID = '5293126208';     // <-- Thay bằng chat ID
+
+   const questions = [
+{
+  "question": "Câu 1: Đâu không phải vai trò của chăn nuôi?",
+  "options": {
+    "A": "Cung cấp sức kéo",
+    "B": "Cung cấp nguyên liệu cho sản xuất chăn, áo lông vũ.",
+    "C": "Cung cấp nguyên liệu cho sản xuất bánh mì.",
+    "D": "Cung cấp nguyên liệu cho sản xuất giày da."
+  },
+  "answer": "C"
+},
+{
+  "question": "Câu 2: Con vật nào dưới đây thường không cung cấp sức kéo?",
+  "options": {
+    "A": "Trâu.",
+    "B": "Bò.",
+    "C": "Lợn.",
+    "D": "Ngựa."
+  },
+  "answer": "C"
+},
+{
+  "question": "Câu 3: Hoạt động nào trong chăn nuôi dưới đây có thể gây ô nhiễm môi trường?",
+  "options": {
+    "A": "Xây hầm biogas để xử lý chất thải cho các trại chăn nuôi.",
+    "B": "Thu chất thải để ủ làm phân hữu cơ.",
+    "C": "Thường xuyên vệ sinh chuồng nuôi sạch sẽ.",
+    "D": "Thả rông vật nuôi, nuôi vật nuôi dưới gầm nhà sàn."
+  },
+  "answer": "D"
+},
+{
+  "question": "Câu 4: Ý nào dưới đây là không phù hợp để mô tả vai trò của việc nuôi dưỡng và chăm sóc vật nuôi?",
+  "options": {
+    "A": "Giúp con vật sinh trưởng và phát triển tốt.",
+    "B": "Giúp con vật nâng cao sức đề kháng để chống lại bệnh tật.",
+    "C": "Giúp nâng cao năng suất và chất lượng sản phẩm chăn nuôi.",
+    "D": "Kéo dài thời gian nuôi."
+  },
+  "answer": "D"
+},
+{
+  "question": "Câu 5: Vì sao cần cho gia súc non bú sữa đầu càng sớm càng tốt?",
+  "options": {
+    "A": "Sữa đầu có chứa nhiều nước giúp cho con non khỏi bị khát nước.",
+    "B": "Sữa đầu có chứa chất kháng sinh giúp cho cơ thể con non chống lại bệnh tật.",
+    "C": "Sữa đầu có chứa chất kháng thể giúp cho cơ thể con non chống lại bệnh tật.",
+    "D": "Sữa đầu chứa nhiều chất đạm giúp cho cơ thể con non chống lại bệnh tật."
+  },
+  "answer": "C"
+},
+{
+  "question": "Câu 6: Ý nào dưới đây không phù hợp với việc nuôi dưỡng và chăm sóc vật nuôi cái sinh sản?",
+  "options": {
+    "A": "Tiêm phòng đầy đủ.",
+    "B": "Đảm bảo chuồng nuôi sạch sẽ, thoáng khí.",
+    "C": "Cho con vật ăn thật nhiều để càng béo càng tốt.",
+    "D": "Giữ vệ sinh thân thể và cho uống đủ nước."
+  },
+  "answer": "C"
+},
+{
+  "question": "Câu 7: Biện pháp kĩ thuật nào dưới đây không phù hợp với việc nuôi dưỡng, chăm sóc gia súc non?",
+  "options": {
+    "A": "Cho vật nuôi bú sữa đầu.",
+    "B": "Tập cho con vật biết cày kéo.",
+    "C": "Tập ăn sớm với các loại thức ăn đủ chất dinh dưỡng.",
+    "D": "Tiêm vaccine và vệ sinh phòng bệnh."
+  },
+  "answer": "B"
+},
+{
+  "question": "Câu 8: Nguyên nhân gây bệnh nào sau đây cho vật nuôi thuộc tác nhân cơ học?",
+  "options": {
+    "A": "Tia phóng xạ.",
+    "B": "Chấn thương.",
+    "C": "Thuốc trừ sâu.",
+    "D": "Vi rút."
+  },
+  "answer": "B"
+},
+{
+  "question": "Câu 9: Nguyên nhân gây bệnh nào sau đây cho vật nuôi thuộc tác nhân lí học?",
+  "options": {
+    "A": "Chấn thương.",
+    "B": "Tia phóng xạ.",
+    "C": "Thuốc trừ sâu.",
+    "D": "Vi rút."
+  },
+  "answer": "B"
+},
+{
+  "question": "Câu 10: Nguyên nhân nào gây bệnh ở vật nuôi?",
+  "options": {
+    "A": "Tác nhân gây bệnh xâm nhập vào cơ thể động vật.",
+    "B": "Động vật có sức đề kháng thấp.",
+    "C": "Môi trường bất lợi cho động vật và thuận lợi cho tác nhân gây bệnh.",
+    "D": "Cả 3 đáp án trên."
+  },
+  "answer": "D"
+},
+{
+  "question": "Câu 11: Môi trường, đặc điểm sống của tôm thẻ chân trắng là:",
+  "options": {
+    "A": "nước ngọt",
+    "B": "nước mặn",
+    "C": "nước lợ và nước mặn",
+    "D": "nước lọc"
+  },
+  "answer": "C"
+},
+{
+  "question": "Câu 12: Nội dung nào sau đây là đúng khi nói về vai trò của nuôi thủy sản đối với con người?",
+  "options": {
+    "A": "Cung cấp nguồn thức ăn giàu chất đạm cho con người.",
+    "B": "Cung cấp nguồn thức ăn giàu tinh bột cho con người.",
+    "C": "Cung cấp nguồn thức ăn giàu chất xơ cho con người.",
+    "D": "Cung cấp môi trường sống trong lành cho con người."
+  },
+  "answer": "A"
+},
+{
+  "question": "Câu 13: Loại động vật nào sau đây không phải là động vật thủy sản?",
+  "options": {
+    "A": "Rắn.",
+    "B": "Tôm.",
+    "C": "Cua đồng.",
+    "D": "Ốc."
+  },
+  "answer": "A"
+},
+{
+  "question": "Câu 14: Loại cá nào dưới đây là cá da trơn?",
+  "options": {
+    "A": "Cá tra",
+    "B": "Cá chép",
+    "C": "Cá chẽm",
+    "D": "Cá trắm cỏ"
+  },
+  "answer": "A"
+},
+{
+  "question": "Câu 15: Trong các loài cá sau đây, cá nào có vảy cứng sáng bóng?",
+  "options": {
+    "A": "Cá tra",
+    "B": "Cá rô phi",
+    "C": "Cá chẽm",
+    "D": "Cá chép"
+  },
+  "answer": "B"
+},
+{
+  "question": "Câu 16: Nuôi trồng thủy sản không có vai trò gì?",
+  "options": {
+    "A": "Cung cấp thực phẩm cho con người",
+    "B": "Cung cấp lương thực cho con người",
+    "C": "Cung cấp nguyên liệu cho chế biến và xuất khẩu",
+    "D": "Cung cấp nguyên liệu cho sản xuất thức ăn chăn nuôi"
+  },
+  "answer": "D"
+},
+{
+  "question": "Câu 17: Quy trình cải tạo ao nuôi tiến hành theo mấy bước?",
+  "options": {
+    "A": "2",
+    "B": "4",
+    "C": "6",
+    "D": "7"
+  },
+  "answer": "C"
+},
+{
+  "question": "Câu 18: Có mấy loại thức ăn cho cá?",
+  "options": {
+    "A": "1",
+    "B": "2",
+    "C": "3",
+    "D": "4"
+  },
+  "answer": "B"
+},
+{
+  "question": "Câu 19: Bước đầu tiên của quy trình nuôi cá nước ngọt trong ao là:",
+  "options": {
+    "A": "chuẩn bị ao nuôi",
+    "B": "thả cá giống",
+    "C": "chăm sóc, quản lí cá sau khi thả",
+    "D": "thu hoạch"
+  },
+  "answer": "A"
+},
+{
+  "question": "Câu 20: Bước cuối của quy trình nuôi cá nước ngọt trong ao là:",
+  "options": {
+    "A": "thu hoạch",
+    "B": "chuẩn bị ao nuôi",
+    "C": "thả cá giống",
+    "D": "chăm sóc, quản lí cá sau khi thả"
+  },
+  "answer": "A"
+},
+{
+  "question": "Câu 21",
+  "options": {
+    "A": "3",
+    "B": "1",
+    "C": "2",
+    "D": "4"
+  },
+  "answer": "D"
+},
+{
+  "question": "Câu 22",
+  "options": {
+    "A": "Dự kiến kĩ thuật nuôi và chăm sóc",
+    "B": "Liệt kê cơ sở vật chất, vật tư, dụng cụ",
+    "C": "Tính toán chi phí",
+    "D": "Cả 3 đáp án trên"
+  },
+  "answer": "A"
+},
+{
+  "question": "Câu 23",
+  "options": {
+    "A": "Liệt kê cơ sở vật chất, vật tư, dụng cụ",
+    "B": "Dự kiến kĩ thuật nuôi và chăm sóc",
+    "C": "Tính toán chi phí",
+    "D": "Cả 3 đáp án trên"
+  },
+  "answer": "C"
+},
+{
+  "question": "Câu 24",
+  "options": {
+    "A": "Hạn chế mầm bệnh",
+    "B": "Hạn chế đại dịch",
+    "C": "Tạo điều kiện môi trường tốt nhất cho cá phát triển",
+    "D": "Cả 3 đáp án trên"
+  },
+  "answer": "D"
+},
+{
+  "question": "Câu 25",
+  "options": {
+    "A": "Chuẩn bị ao nuôi",
+    "B": "Thả cá giống",
+    "C": "Chăm sóc, quản lí cá sau thả",
+    "D": "Thu hoạch"
+  },
+  "answer": "B"
+},
+{
+  "question": "Câu 26",
+  "options": {
+    "A": "Đồng bằng sông Hồng",
+    "B": "Đồng bằng Nam Trung Bộ",
+    "C": "Đồng bằng sông Cửu Long",
+    "D": "Tất cả các câu trên đều đúng"
+  },
+  "answer": "C"
+},
+{
+  "question": "Câu 27",
+  "options": {
+    "A": "Ruốc cá hồi",
+    "B": "Xúc xích",
+    "C": "Cá thu đóng hộp",
+    "D": "Tôm"
+  },
+  "answer": "B"
+},
+{
+  "question": "Câu 28",
+  "options": {
+    "A": "Mỡ cá, gan cá",
+    "B": "Xương cá",
+    "C": "Thịt cá",
+    "D": "Da cá"
+  },
+  "answer": "A"
+}
+];
+
+    const form = document.getElementById("quizForm");
+
+    questions.forEach((q, i) => {
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `<p><strong>${q.question}</strong></p>`;
+      for (const [key, text] of Object.entries(q.options)) {
+        div.innerHTML += `
+          <label>
+            <input type="radio" name="q${i}" value="${key}">
+            ${key}. ${text}
+          </label>`;
+      }
+      form.appendChild(div);
+    });
+
+    function startQuiz() {
+      const name = document.getElementById("studentName").value.trim();
+      if (!name) {
+        alert("Vui lòng nhập họ và tên trước khi bắt đầu làm bài.");
+        return;
+      }
+      document.getElementById("quizSection").style.display = "block";
+      document.querySelector("button[onclick='startQuiz()']").style.display = "none";
+      document.getElementById("studentName").disabled = true;
+    }
+
+    async function submitQuiz() {
+      const studentName = document.getElementById("studentName").value.trim();
+      const result = document.getElementById("result");
+      result.innerHTML = "<h2>Kết quả</h2>";
+      let score = 0;
+
+      questions.forEach((q, i) => {
+        const radios = document.getElementsByName(`q${i}`);
+        let selected = "";
+        radios.forEach(r => { if (r.checked) selected = r.value; });
+
+        const isCorrect = selected === q.answer;
+        if (isCorrect) score++;
+
+        result.innerHTML += `<div class="card"><p><strong>${q.question}</strong></p>`;
+
+        for (const [key, text] of Object.entries(q.options)) {
+          let line = `${key}. ${text}`;
+          if (key === q.answer) {
+            line = `<span class="correct-answer">${line} (Đáp án đúng)</span>`;
+          } else if (key === selected) {
+            line = `<span class="wrong-answer">${line} (Bạn chọn – Sai)</span>`;
+          }
+          result.innerHTML += `<div>${line}</div>`;
+        }
+
+        result.innerHTML += `<p><strong>Kết quả:</strong> ${isCorrect ? '<span class="correct-answer">Đúng</span>' : '<span class="wrong-answer">Sai</span>'}</p></div><hr>`;
+      });
+
+      result.innerHTML += `<h3 style="text-align:center">🎉 Bạn trả lời đúng ${score}/${questions.length} câu</h3>`;
+
+      const message = `📋 Kết quả làm bài:\n👤 Họ tên: ${studentName}\n✅ Số câu đúng: ${score}/${questions.length}`;
+
+      try {
+        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message })
+        });
+      } catch (error) {
+        console.error("Lỗi khi gửi Telegram:", error);
+      }
+    }
+  </script>
+</body>
+</html>
