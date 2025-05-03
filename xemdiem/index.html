@@ -100,51 +100,6 @@
       color: #ffd700;
       font-weight: bold;
     }
-    @media (max-width: 768px) {
-  header h1 {
-    font-size: 16px;
-  }
-
-  nav {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  nav a, .dropbtn {
-    text-align: left;
-    padding: 10px;
-    font-size: 14px;
-  }
-
-  .dropdown-content {
-    position: static;
-    box-shadow: none;
-  }
-
-  .content {
-    padding: 10px;
-  }
-
-  .highlight-bar {
-    font-size: 14px;
-    padding: 8px;
-  }
-
-  .footer, .footer-bottom {
-    font-size: 12px;
-    padding: 10px;
-  }
-
-  header img {
-    width: 70px;
-    height: 70px;
-  }
-
-  p {
-    font-size: 14px;
-  }
-}
-
   </style>
     <script src="students.js"></script>
 </head>
@@ -241,75 +196,86 @@
     Design by <span>EduSoft</span>
   </div>
 
-  <script>
-    function logout() {
-      localStorage.removeItem("mssv");
-      for (let hk = 1; hk <= 2; hk++) {
-        for (let i = 1; i <= 5; i++) {
-          localStorage.removeItem(`grades_${hk}_${i}`);
-        }
-      }
-      window.location.href = "login.html";
-    }
+  <!-- PHẦN TRÊN KHÔNG THAY ĐỔI (giữ nguyên toàn bộ HTML) -->
+<!-- ... -->
 
-    document.getElementById("student-id").textContent = localStorage.getItem("mssv") || "Không tìm thấy";
-    document.getElementById("student-name").textContent = "Nguyễn Văn A";
-
-    function randomPoint(min = 5, max = 10) {
-      return +(Math.random() * (max - min) + min).toFixed(1);
-    }
-
-    function calculateGradeSystem10(cc, gk, ck) {
-      return +(cc * 0.1 + gk * 0.3 + ck * 0.6).toFixed(1);
-    }
-
-    function convertTo4Scale(grade10) {
-      if (grade10 >= 8.5) return 4.0;
-      if (grade10 >= 7.0) return 3.0;
-      if (grade10 >= 5.5) return 2.0;
-      if (grade10 >= 4.0) return 1.0;
-      return 0.0;
-    }
-
-    function saveGrades(hk, index, cc, gk, ck, dhp10, dhp4) {
-      const key = `grades_${hk}_${index}`;
-      localStorage.setItem(key, JSON.stringify({ cc, gk, ck, dhp10, dhp4 }));
-    }
-
-    function getSavedGrades(hk, index) {
-      const key = `grades_${hk}_${index}`;
-      const data = localStorage.getItem(key);
-      return data ? JSON.parse(data) : null;
-    }
-
-    function fillRandomGrades(hk, index) {
-      let saved = getSavedGrades(hk, index);
-      if (!saved) {
-        const cc = randomPoint();
-        const gk = randomPoint();
-        const ck = randomPoint();
-        const dhp10 = calculateGradeSystem10(cc, gk, ck);
-        const dhp4 = convertTo4Scale(dhp10);
-        saveGrades(hk, index, cc, gk, ck, dhp10, dhp4);
-        saved = { cc, gk, ck, dhp10, dhp4 };
-      }
-
-      document.getElementById(`cc${hk}_${index}`).textContent = saved.cc;
-      document.getElementById(`gk${hk}_${index}`).textContent = saved.gk;
-      document.getElementById(`ck${hk}_${index}_l1`).textContent = saved.ck;
-      document.getElementById(`ck${hk}_${index}_l2`).textContent = saved.ck;
-      document.getElementById(`dhp10_${hk}_${index}`).textContent = saved.dhp10;
-      document.getElementById(`dhp4_${hk}_${index}`).textContent = saved.dhp4;
-    }
-
-    function generateAllGrades() {
+<script>
+  function logout() {
+    localStorage.removeItem("mssv");
+    for (let hk = 1; hk <= 2; hk++) {
       for (let i = 1; i <= 5; i++) {
-        fillRandomGrades(1, i);
-        fillRandomGrades(2, i);
+        localStorage.removeItem(`grades_${hk}_${i}`);
       }
     }
+    window.location.href = "login.html";
+  }
 
-    window.onload = generateAllGrades;
-  </script>
+  document.getElementById("student-id").textContent = localStorage.getItem("mssv") || "Không tìm thấy";
+  document.getElementById("student-name").textContent = "Nguyễn Văn A";
+
+  function randomPoint(min = 5, max = 10) {
+    return +(Math.random() * (max - min) + min).toFixed(1);
+  }
+
+  function calculateGradeSystem10(cc, gk, ck) {
+    return +(cc * 0.1 + gk * 0.3 + ck * 0.6).toFixed(1);
+  }
+
+  function convertTo4Scale(grade10) {
+    if (grade10 >= 8.5) return 4.0;
+    if (grade10 >= 7.0) return 3.0;
+    if (grade10 >= 5.5) return 2.0;
+    if (grade10 >= 4.0) return 1.0;
+    return 0.0;
+  }
+
+  function saveGrades(hk, index, cc, gk, ck, dhp10, dhp4) {
+    const key = `grades_${hk}_${index}`;
+    localStorage.setItem(key, JSON.stringify({ cc, gk, ck, dhp10, dhp4 }));
+  }
+
+  function getSavedGrades(hk, index) {
+    const key = `grades_${hk}_${index}`;
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : null;
+  }
+
+  function fillRandomGrades(hk, index) {
+    let saved = getSavedGrades(hk, index);
+    if (!saved) {
+      const cc = randomPoint();
+      const gk = randomPoint();
+      const ck = randomPoint();
+      const dhp10 = calculateGradeSystem10(cc, gk, ck);
+      const dhp4 = convertTo4Scale(dhp10);
+      saveGrades(hk, index, cc, gk, ck, dhp10, dhp4);
+      saved = { cc, gk, ck, dhp10, dhp4 };
+    }
+
+    document.getElementById(`cc${hk}_${index}`).textContent = saved.cc;
+    document.getElementById(`gk${hk}_${index}`).textContent = saved.gk;
+
+    // Danh sách các môn học cần ẩn điểm ở học kỳ 2
+    const hiddenCourses = {
+      2: [1, 2, 4] // Tiếng Anh 2, Lập trình căn bản, Kiến trúc máy tính
+    };
+    const shouldHide = hiddenCourses[hk]?.includes(index);
+
+    document.getElementById(`ck${hk}_${index}_l1`).textContent = shouldHide ? '' : saved.ck;
+    document.getElementById(`ck${hk}_${index}_l2`).textContent = shouldHide ? '' : saved.ck;
+    document.getElementById(`dhp10_${hk}_${index}`).textContent = shouldHide ? '' : saved.dhp10;
+    document.getElementById(`dhp4_${hk}_${index}`).textContent = shouldHide ? '' : saved.dhp4;
+  }
+
+  function generateAllGrades() {
+    for (let i = 1; i <= 5; i++) {
+      fillRandomGrades(1, i);
+      fillRandomGrades(2, i);
+    }
+  }
+
+  window.onload = generateAllGrades;
+</script>
+
 </body>
 </html>
