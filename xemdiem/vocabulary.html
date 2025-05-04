@@ -3,37 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <title>English Quiz - University Level</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #f0f4ff;
       color: #333;
       margin: 0;
-      padding: 20px;
+      padding: 0;
+    }
+
+    .top-bar {
+      position: sticky;
+      top: 0;
+      background-color: #f0f4ff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.1em;
+      padding: 12px 20px;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .top-bar .time {
+      color: #e60000;
+    }
+
+    .top-bar .score {
+      color: #2b4eff;
+      font-weight: bold;
     }
 
     h1 {
       text-align: center;
       color: #2b4eff;
-      font-size: 1.8em;
     }
 
     .quiz-container {
       max-width: 800px;
-      margin: auto;
+      margin: 20px auto;
       background: #ffffff;
-      padding: 20px;
+      padding: 30px;
       border-radius: 12px;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
     }
 
     .question {
-      margin-bottom: 25px;
+      margin-bottom: 30px;
     }
 
     .question p {
-      font-size: 1.1em;
+      font-size: 1.2em;
       font-weight: bold;
     }
 
@@ -47,7 +67,7 @@
       text-align: left;
       background: #e7edff;
       border: none;
-      padding: 12px 16px;
+      padding: 12px 18px;
       font-size: 1em;
       border-radius: 8px;
       transition: background 0.3s, transform 0.2s;
@@ -77,66 +97,29 @@
     #submit-btn {
       display: block;
       margin: 30px auto;
-      padding: 14px 28px;
-      font-size: 1.1em;
+      padding: 12px 24px;
+      font-size: 1.2em;
       background-color: #2b4eff;
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      width: 100%;
-      max-width: 300px;
-    }
-
-    #timer {
-      text-align: center;
-      font-size: 1.2em;
-      margin-bottom: 20px;
-      color: #e60000;
-    }
-
-    /* Responsive Styles */
-    @media (max-width: 600px) {
-      body {
-        padding: 15px;
-      }
-
-      h1 {
-        font-size: 1.5em;
-      }
-
-      .quiz-container {
-        padding: 16px;
-      }
-
-      .question p {
-        font-size: 1em;
-      }
-
-      .option button {
-        font-size: 0.95em;
-        padding: 10px 14px;
-      }
-
-      #submit-btn {
-        font-size: 1em;
-        padding: 12px 20px;
-      }
-
-      #timer {
-        font-size: 1em;
-      }
     }
   </style>
 </head>
 <body>
+
+  <div class="top-bar">
+    <div id="timer" class="time">Time left: 45:00</div>
+    <div id="score" class="score">Correct: 0/3</div>
+  </div>
+
   <h1>English Vocabulary Quiz</h1>
-  <div id="timer">Time left: 45:00</div>
   <div class="quiz-container" id="quiz"></div>
   <button id="submit-btn">Nộp bài</button>
 
   <script>
-    const questions = [
+   const questions = [
   {
     text: "There aren’t many families with the ______ Cumberbatch.",
     options: ['A. first name', 'B. surname', 'C. brother'],
@@ -525,6 +508,8 @@
 ];
 
     const quizContainer = document.getElementById("quiz");
+    const scoreDiv = document.getElementById("score");
+    let currentScore = 0;
 
     questions.forEach((q, index) => {
       const div = document.createElement("div");
@@ -544,14 +529,16 @@
           if (btn.dataset.clicked) return;
           btn.dataset.clicked = "true";
 
-          const allButtons = div.querySelectorAll("button");
-          allButtons.forEach(b => b.disabled = true);
+          const allBtns = div.querySelectorAll("button");
+          allBtns.forEach(b => b.disabled = true);
 
           if (i === q.correctIndex) {
             btn.classList.add("correct");
+            currentScore++;
+            scoreDiv.textContent = `Correct: ${currentScore}/${questions.length}`;
           } else {
             btn.classList.add("incorrect");
-            allButtons[q.correctIndex].classList.add("correct");
+            allBtns[q.correctIndex].classList.add("correct");
           }
         };
 
@@ -565,8 +552,10 @@
     function getScore() {
       let score = 0;
       document.querySelectorAll(".question").forEach((qDiv, index) => {
-        const correctBtn = qDiv.querySelectorAll("button")[questions[index].correctIndex];
-        if (correctBtn.classList.contains("correct")) {
+        const selectedBtn = [...qDiv.querySelectorAll("button")].find(btn => btn.dataset.clicked === "true");
+        if (!selectedBtn) return;
+        const selectedIndex = [...qDiv.querySelectorAll("button")].indexOf(selectedBtn);
+        if (selectedIndex === questions[index].correctIndex) {
           score++;
         }
       });
@@ -603,7 +592,7 @@
       await sendTelegramMessage(`📝 Bài làm từ IP: ${ip}\n✅ Số câu đúng: ${score}/${questions.length}`);
     };
 
-    // Countdown Timer (45 minutes)
+    // Countdown Timer
     let timeLeft = 2700;
     const timerDiv = document.getElementById("timer");
     const timerInterval = setInterval(() => {
