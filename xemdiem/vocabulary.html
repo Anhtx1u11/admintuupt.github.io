@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>English Quiz - University Level</title>
   <style>
     body {
@@ -15,21 +16,22 @@
     .top-bar {
       position: sticky;
       top: 0;
-      background-color: #f0f4ff;
+      background: #f0f4ff;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 1.1em;
-      padding: 12px 20px;
+      padding: 15px 20px;
       z-index: 1000;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
-    .top-bar .time {
-      color: #e60000;
+    #timer {
+      font-size: 1.1em;
+      color: red;
     }
 
-    .top-bar .score {
+    #score-display {
+      font-size: 1.1em;
       color: #2b4eff;
       font-weight: bold;
     }
@@ -37,6 +39,7 @@
     h1 {
       text-align: center;
       color: #2b4eff;
+      margin-top: 20px;
     }
 
     .quiz-container {
@@ -105,13 +108,41 @@
       border-radius: 8px;
       cursor: pointer;
     }
+
+    @media (max-width: 600px) {
+      .quiz-container {
+        padding: 20px;
+        margin: 10px;
+      }
+
+      .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        font-size: 1em;
+        gap: 6px;
+      }
+
+      .question p {
+        font-size: 1em;
+      }
+
+      .option button {
+        font-size: 1em;
+        padding: 10px 14px;
+      }
+
+      #submit-btn {
+        font-size: 1em;
+        padding: 10px 20px;
+        width: 90%;
+      }
+    }
   </style>
 </head>
 <body>
-
   <div class="top-bar">
-    <div id="timer" class="time">Time left: 45:00</div>
-    <div id="score" class="score">Correct: 0/3</div>
+    <div id="timer">Time left: 45:00</div>
+    <div id="score-display">Correct: 0/3</div>
   </div>
 
   <h1>English Vocabulary Quiz</h1>
@@ -119,7 +150,7 @@
   <button id="submit-btn">Nộp bài</button>
 
   <script>
-   const questions = [
+    const questions = [
   {
     text: "There aren’t many families with the ______ Cumberbatch.",
     options: ['A. first name', 'B. surname', 'C. brother'],
@@ -506,10 +537,9 @@
     correctIndex: 1
   },
 ];
-
+    let correctCount = 0;
     const quizContainer = document.getElementById("quiz");
-    const scoreDiv = document.getElementById("score");
-    let currentScore = 0;
+    const scoreDisplay = document.getElementById("score-display");
 
     questions.forEach((q, index) => {
       const div = document.createElement("div");
@@ -526,19 +556,20 @@
         const btn = document.createElement("button");
         btn.textContent = opt;
         btn.onclick = () => {
-          if (btn.dataset.clicked) return;
-          btn.dataset.clicked = "true";
+          if (btn.disabled) return;
 
-          const allBtns = div.querySelectorAll("button");
-          allBtns.forEach(b => b.disabled = true);
+          const allButtons = div.querySelectorAll("button");
+          allButtons.forEach(b => b.disabled = true);
+
+          const correctBtn = allButtons[q.correctIndex];
+          correctBtn.classList.add("correct");
 
           if (i === q.correctIndex) {
             btn.classList.add("correct");
-            currentScore++;
-            scoreDiv.textContent = `Correct: ${currentScore}/${questions.length}`;
+            correctCount++;
+            scoreDisplay.textContent = `Correct: ${correctCount}/${questions.length}`;
           } else {
             btn.classList.add("incorrect");
-            allBtns[q.correctIndex].classList.add("correct");
           }
         };
 
@@ -550,16 +581,7 @@
     });
 
     function getScore() {
-      let score = 0;
-      document.querySelectorAll(".question").forEach((qDiv, index) => {
-        const selectedBtn = [...qDiv.querySelectorAll("button")].find(btn => btn.dataset.clicked === "true");
-        if (!selectedBtn) return;
-        const selectedIndex = [...qDiv.querySelectorAll("button")].indexOf(selectedBtn);
-        if (selectedIndex === questions[index].correctIndex) {
-          score++;
-        }
-      });
-      return score;
+      return correctCount;
     }
 
     async function getIP() {
@@ -592,7 +614,7 @@
       await sendTelegramMessage(`📝 Bài làm từ IP: ${ip}\n✅ Số câu đúng: ${score}/${questions.length}`);
     };
 
-    // Countdown Timer
+    // Countdown Timer (45 minutes)
     let timeLeft = 2700;
     const timerDiv = document.getElementById("timer");
     const timerInterval = setInterval(() => {
