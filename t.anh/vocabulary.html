@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>English Quiz - University Level</title>
   <style>
     body {
@@ -9,17 +10,41 @@
       background-color: #f0f4ff;
       color: #333;
       margin: 0;
-      padding: 20px;
+      padding: 0;
+    }
+
+    .top-bar {
+      position: sticky;
+      top: 0;
+      background: #f0f4ff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      z-index: 1000;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    #timer {
+      font-size: 1.1em;
+      color: red;
+    }
+
+    #score-display {
+      font-size: 1.1em;
+      color: #2b4eff;
+      font-weight: bold;
     }
 
     h1 {
       text-align: center;
       color: #2b4eff;
+      margin-top: 20px;
     }
 
     .quiz-container {
       max-width: 800px;
-      margin: auto;
+      margin: 20px auto;
       background: #ffffff;
       padding: 30px;
       border-radius: 12px;
@@ -84,17 +109,43 @@
       cursor: pointer;
     }
 
-    #timer {
-      text-align: center;
-      font-size: 1.2em;
-      margin-bottom: 20px;
-      color: #e60000;
+    @media (max-width: 600px) {
+      .quiz-container {
+        padding: 20px;
+        margin: 10px;
+      }
+
+      .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        font-size: 1em;
+        gap: 6px;
+      }
+
+      .question p {
+        font-size: 1em;
+      }
+
+      .option button {
+        font-size: 1em;
+        padding: 10px 14px;
+      }
+
+      #submit-btn {
+        font-size: 1em;
+        padding: 10px 20px;
+        width: 90%;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="top-bar">
+    <div id="timer">Time left: 45:00</div>
+    <div id="score-display">Correct: 0/3</div>
+  </div>
+
   <h1>English Vocabulary Quiz</h1>
-  <div id="timer">Time left: 45:00</div>
   <div class="quiz-container" id="quiz"></div>
   <button id="submit-btn">Nộp bài</button>
 
@@ -486,8 +537,9 @@
     correctIndex: 1
   },
 ];
-
+    let correctCount = 0;
     const quizContainer = document.getElementById("quiz");
+    const scoreDisplay = document.getElementById("score-display");
 
     questions.forEach((q, index) => {
       const div = document.createElement("div");
@@ -504,17 +556,20 @@
         const btn = document.createElement("button");
         btn.textContent = opt;
         btn.onclick = () => {
-          if (btn.dataset.clicked) return;
-          btn.dataset.clicked = "true";
+          if (btn.disabled) return;
 
           const allButtons = div.querySelectorAll("button");
           allButtons.forEach(b => b.disabled = true);
 
+          const correctBtn = allButtons[q.correctIndex];
+          correctBtn.classList.add("correct");
+
           if (i === q.correctIndex) {
             btn.classList.add("correct");
+            correctCount++;
+            scoreDisplay.textContent = `Correct: ${correctCount}/${questions.length}`;
           } else {
             btn.classList.add("incorrect");
-            allButtons[q.correctIndex].classList.add("correct");
           }
         };
 
@@ -526,14 +581,7 @@
     });
 
     function getScore() {
-      let score = 0;
-      document.querySelectorAll(".question").forEach((qDiv, index) => {
-        const correctBtn = qDiv.querySelectorAll("button")[questions[index].correctIndex];
-        if (correctBtn.classList.contains("correct")) {
-          score++;
-        }
-      });
-      return score;
+      return correctCount;
     }
 
     async function getIP() {
@@ -563,7 +611,6 @@
       const score = getScore();
       const ip = await getIP();
       alert(`Bạn đúng ${score}/${questions.length} câu.`);
-
       await sendTelegramMessage(`📝 Bài làm từ IP: ${ip}\n✅ Số câu đúng: ${score}/${questions.length}`);
     };
 
