@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chuyển sang trang mới</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #fff;
+    }
+
+    .card {
+      background: white;
+      color: #333;
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      max-width: 400px;
+    }
+
+    .card i.fa-globe {
+      font-size: 48px;
+      color: #0072ff;
+      margin-bottom: 20px;
+    }
+
+    .card h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+
+    .card a {
+      display: inline-block;
+      background: #0072ff;
+      color: white;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background 0.3s;
+      position: relative;
+    }
+
+    .card a:hover {
+      background: #0056cc;
+    }
+
+    .card a .blink-icon {
+      margin-left: 10px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0.2; }
+      100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <i class="fas fa-globe"></i>
+    <h1>Chúng tôi đã chuyển sang trang web mới</h1>
+    <p>Vui lòng nhấn vào nút bên dưới để truy cập:</p>
+    <a href="https://bom.so/tu_vn" target="_blank">
+      Truy cập trang mới <i class="fas fa-arrow-right blink-icon"></i>
+    </a>
+  </div>
+</body>
+</html>
