@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Website đang bảo trì</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      text-align: center;
+    }
+
+    .overlay {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 100px 20px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-size: 1.2em;
+      margin-bottom: 40px;
+    }
+
+    .countdown {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      font-size: 1.5em;
+    }
+
+    .time-box {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      min-width: 80px;
+    }
+
+    .footer {
+      margin-top: 60px;
+      font-size: 0.9em;
+      color: #ccc;  
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <img src="logotu-fotor-20250509173456.png" alt="Logo" width="100"> <!-- Thay logo tại đây -->
+    <h1>Website đang bảo trì!</h1>
+    <p>Chúng tôi đang cập nhật một số tính năng mới để cải thiện trải nghiệm người dùng. Vui lòng quay lại sau:</p>
+
+    <div class="countdown">
+      <div class="time-box">
+        <div id="days">00</div>
+        <div>Ngày</div>
+      </div>
+      <div class="time-box">
+        <div id="hours">00</div>
+        <div>Giờ</div>
+      </div>
+      <div class="time-box">
+        <div id="minutes">00</div>
+        <div>Phút</div>
+      </div>
+      <div class="time-box">
+        <div id="seconds">00</div>
+        <div>Giây</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      &copy; 2025 Công ty MTV A.Tú . Mọi quyền được bảo lưu.
+    </div>
+  </div>
+
+  <script>
+    // Đặt ngày kết thúc bảo trì ở đây
+    const countDownDate = new Date("May 12, 2025 12:00:00").getTime();
+
+    const countdown = setInterval(function () {
+      const now = new Date().getTime();
+      const distance = countDownDate - now;
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("days").innerHTML = days;
+      document.getElementById("hours").innerHTML = hours;
+      document.getElementById("minutes").innerHTML = minutes;
+      document.getElementById("seconds").innerHTML = seconds;
+
+      if (distance < 0) {
+        clearInterval(countdown);
+        document.querySelector(".countdown").innerHTML = "Đã kết thúc bảo trì!";
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
